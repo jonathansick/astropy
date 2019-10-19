@@ -53,6 +53,7 @@ Getting Started
    install
    whatsnew/4.0
    importing_astropy
+   New Example Gallery <examples/index>
    Example Gallery <generated/examples/index>
    Tutorials <http://learn.astropy.org/>
    Get Help <http://www.astropy.org/help.html>

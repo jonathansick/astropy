@@ -97,6 +97,9 @@ rst_epilog += """
 .. _`astropy-dev mailing list`: http://groups.google.com/group/astropy-dev
 """.format(astropy)
 
+# Enable the example gallery
+astropy_examples_enabled = True
+
 # -- Project information ------------------------------------------------------
 
 project = u'Astropy'
