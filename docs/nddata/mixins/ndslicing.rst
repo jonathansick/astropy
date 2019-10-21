@@ -113,42 +113,38 @@ So we are able to get all valid data points by slicing with the mask.
 Examples
 --------
 
-..
-  EXAMPLE START
-  Removing Masked Data in NDDataRef
+.. example:: Removing Masked Data in NDDataRef
+   :tags: astropy.nddata
 
-To get all of the valid data points by slicing with the mask::
+   To get all of the valid data points by slicing with the mask::
 
-    >>> data = np.array([[1,2,3],[4,5,6],[7,8,9]])
-    >>> mask = np.array([[0,1,0],[1,1,1],[0,0,1]], dtype=bool)
-    >>> uncertainty = StdDevUncertainty(np.sqrt(data))
-    >>> ndd = NDDataRef(data, mask=mask, uncertainty=uncertainty)
-    >>> # don't forget that ~ or you'll get the invalid points
-    >>> ndd_sliced = ndd[~ndd.mask]
-    >>> ndd_sliced
-    NDDataRef([1, 3, 7, 8])
+       >>> data = np.array([[1,2,3],[4,5,6],[7,8,9]])
+       >>> mask = np.array([[0,1,0],[1,1,1],[0,0,1]], dtype=bool)
+       >>> uncertainty = StdDevUncertainty(np.sqrt(data))
+       >>> ndd = NDDataRef(data, mask=mask, uncertainty=uncertainty)
+       >>> # don't forget that ~ or you'll get the invalid points
+       >>> ndd_sliced = ndd[~ndd.mask]
+       >>> ndd_sliced
+       NDDataRef([1, 3, 7, 8])
 
-    >>> ndd_sliced.mask
-    array([False, False, False, False]...)
+       >>> ndd_sliced.mask
+       array([False, False, False, False]...)
 
-    >>> ndd_sliced.uncertainty  # doctest: +FLOAT_CMP
-    StdDevUncertainty([1.        , 1.73205081, 2.64575131, 2.82842712])
+       >>> ndd_sliced.uncertainty  # doctest: +FLOAT_CMP
+       StdDevUncertainty([1.        , 1.73205081, 2.64575131, 2.82842712])
 
-Or all invalid points::
+   Or all invalid points::
 
-    >>> ndd_sliced = ndd[ndd.mask] # without the ~ now!
-    >>> ndd_sliced
-    NDDataRef([2, 4, 5, 6, 9])
+       >>> ndd_sliced = ndd[ndd.mask] # without the ~ now!
+       >>> ndd_sliced
+       NDDataRef([2, 4, 5, 6, 9])
 
-    >>> ndd_sliced.mask
-    array([ True,  True,  True,  True,  True]...)
+       >>> ndd_sliced.mask
+       array([ True,  True,  True,  True,  True]...)
 
-    >>> ndd_sliced.uncertainty  # doctest: +FLOAT_CMP
-    StdDevUncertainty([1.41421356, 2.        , 2.23606798, 2.44948974, 3.        ])
+       >>> ndd_sliced.uncertainty  # doctest: +FLOAT_CMP
+       StdDevUncertainty([1.41421356, 2.        , 2.23606798, 2.44948974, 3.        ])
 
-.. note::
-    The result of this kind of indexing (boolean indexing) will always be
-    one-dimensional!
-
-..
-  EXAMPLE END
+   .. note::
+       The result of this kind of indexing (boolean indexing) will always be
+       one-dimensional!

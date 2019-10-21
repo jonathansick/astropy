@@ -350,49 +350,45 @@ element-wise correlation coefficient.
 Examples
 --------
 
-..
-  EXAMPLE START
-  Uncertainty with Correlation in NDData
+.. example:: Uncertainty with Correlation in NDData
+   :tags: astropy.nddata
 
-Without correlation, subtracting an `~astropy.nddata.NDDataRef` instance from
-itself results in a non-zero uncertainty::
+   Without correlation, subtracting an `~astropy.nddata.NDDataRef` instance from
+   itself results in a non-zero uncertainty::
 
-    >>> ndd1 = NDDataRef(1, uncertainty=StdDevUncertainty([10]))
-    >>> ndd1.subtract(ndd1, propagate_uncertainties=True).uncertainty  # doctest: +FLOAT_CMP
-    StdDevUncertainty([14.14213562])
+       >>> ndd1 = NDDataRef(1, uncertainty=StdDevUncertainty([10]))
+       >>> ndd1.subtract(ndd1, propagate_uncertainties=True).uncertainty  # doctest: +FLOAT_CMP
+       StdDevUncertainty([14.14213562])
 
-Given a correlation of ``1`` (because they clearly correlate) gives the
-correct uncertainty of ``0``::
+   Given a correlation of ``1`` (because they clearly correlate) gives the
+   correct uncertainty of ``0``::
 
-    >>> ndd1 = NDDataRef(1, uncertainty=StdDevUncertainty([10]))
-    >>> ndd1.subtract(ndd1, propagate_uncertainties=True,
-    ...               uncertainty_correlation=1).uncertainty  # doctest: +FLOAT_CMP
-    StdDevUncertainty([0.])
+       >>> ndd1 = NDDataRef(1, uncertainty=StdDevUncertainty([10]))
+       >>> ndd1.subtract(ndd1, propagate_uncertainties=True,
+       ...               uncertainty_correlation=1).uncertainty  # doctest: +FLOAT_CMP
+       StdDevUncertainty([0.])
 
-Which would be consistent with the equivalent operation ``ndd1 * 0``::
+   Which would be consistent with the equivalent operation ``ndd1 * 0``::
 
-    >>> ndd1.multiply(0, propagate_uncertainties=True).uncertainty # doctest: +FLOAT_CMP
-    StdDevUncertainty([0.])
+       >>> ndd1.multiply(0, propagate_uncertainties=True).uncertainty # doctest: +FLOAT_CMP
+       StdDevUncertainty([0.])
 
-.. warning::
-    The user needs to calculate or know the appropriate value or array manually
-    and pass it to ``uncertainty_correlation``. The implementation follows
-    general first order error propagation formulas. See, for example:
-    `Wikipedia <https://en.wikipedia.org/wiki/Propagation_of_uncertainty#Example_formulas>`_.
+   .. warning::
+       The user needs to calculate or know the appropriate value or array manually
+       and pass it to ``uncertainty_correlation``. The implementation follows
+       general first order error propagation formulas. See, for example:
+       `Wikipedia <https://en.wikipedia.org/wiki/Propagation_of_uncertainty#Example_formulas>`_.
 
-You can also give element-wise correlations::
+   You can also give element-wise correlations::
 
-    >>> ndd1 = NDDataRef([1,1,1,1], uncertainty=StdDevUncertainty([1,1,1,1]))
-    >>> ndd2 = NDDataRef([2,2,2,2], uncertainty=StdDevUncertainty([2,2,2,2]))
-    >>> ndd1.add(ndd2,uncertainty_correlation=np.array([1,0.5,0,-1])).uncertainty  # doctest: +FLOAT_CMP
-    StdDevUncertainty([3.        , 2.64575131, 2.23606798, 1.        ])
+       >>> ndd1 = NDDataRef([1,1,1,1], uncertainty=StdDevUncertainty([1,1,1,1]))
+       >>> ndd2 = NDDataRef([2,2,2,2], uncertainty=StdDevUncertainty([2,2,2,2]))
+       >>> ndd1.add(ndd2,uncertainty_correlation=np.array([1,0.5,0,-1])).uncertainty  # doctest: +FLOAT_CMP
+       StdDevUncertainty([3.        , 2.64575131, 2.23606798, 1.        ])
 
-The correlation ``np.array([1, 0.5, 0, -1])`` would indicate that the first
-element is fully correlated and the second element partially correlates, while
-the third element is uncorrelated, and the fourth is anti-correlated.
-
-..
-  EXAMPLE END
+   The correlation ``np.array([1, 0.5, 0, -1])`` would indicate that the first
+   element is fully correlated and the second element partially correlates, while
+   the third element is uncorrelated, and the fourth is anti-correlated.
 
 Uncertainty with Unit
 ---------------------

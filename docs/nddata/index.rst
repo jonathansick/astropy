@@ -112,57 +112,52 @@ sources, some Gaussian noise, and a "cosmic ray" which we will later mask out.
 Examples
 --------
 
-..
-  EXAMPLE START
-  Working with Two-Dimensional Data Using NDData
+.. example:: Working with Two-Dimensional Data Using NDData
+   :tags: astropy.nddata
 
-First, construct a two-dimensional image with a few sources, some Gaussian
-noise, and a "cosmic ray"::
+   First, construct a two-dimensional image with a few sources, some Gaussian
+   noise, and a "cosmic ray"::
 
-    >>> import numpy as np
-    >>> from astropy.modeling.models import Gaussian2D
-    >>> y, x = np.mgrid[0:500, 0:600]
-    >>> data = (Gaussian2D(1, 150, 100, 20, 10, theta=0.5)(x, y) +
-    ...         Gaussian2D(0.5, 400, 300, 8, 12, theta=1.2)(x,y) +
-    ...         Gaussian2D(0.75, 250, 400, 5, 7, theta=0.23)(x,y) +
-    ...         Gaussian2D(0.9, 525, 150, 3, 3)(x,y) +
-    ...         Gaussian2D(0.6, 200, 225, 3, 3)(x,y))
-    >>> data += 0.01 * np.random.randn(500, 600)
-    >>> cosmic_ray_value = 0.997
-    >>> data[100, 300:310] = cosmic_ray_value
+       >>> import numpy as np
+       >>> from astropy.modeling.models import Gaussian2D
+       >>> y, x = np.mgrid[0:500, 0:600]
+       >>> data = (Gaussian2D(1, 150, 100, 20, 10, theta=0.5)(x, y) +
+       ...         Gaussian2D(0.5, 400, 300, 8, 12, theta=1.2)(x,y) +
+       ...         Gaussian2D(0.75, 250, 400, 5, 7, theta=0.23)(x,y) +
+       ...         Gaussian2D(0.9, 525, 150, 3, 3)(x,y) +
+       ...         Gaussian2D(0.6, 200, 225, 3, 3)(x,y))
+       >>> data += 0.01 * np.random.randn(500, 600)
+       >>> cosmic_ray_value = 0.997
+       >>> data[100, 300:310] = cosmic_ray_value
 
-This image has a large "galaxy" in the lower left and the "cosmic ray" is the
-horizontal line in the lower middle of the image:
+   This image has a large "galaxy" in the lower left and the "cosmic ray" is the
+   horizontal line in the lower middle of the image:
 
-.. doctest-skip::
+   .. doctest-skip::
 
-    >>> import matplotlib.pyplot as plt
-    >>> plt.imshow(data, origin='lower')
+       >>> import matplotlib.pyplot as plt
+       >>> plt.imshow(data, origin='lower')
 
-.. plot::
+   .. plot::
 
-    import numpy as np
-    import matplotlib.pyplot as plt
-    from astropy.modeling.models import Gaussian2D
-    y, x = np.mgrid[0:500, 0:600]
-    data = (Gaussian2D(1, 150, 100, 20, 10, theta=0.5)(x, y) +
-            Gaussian2D(0.5, 400, 300, 8, 12, theta=1.2)(x,y) +
-            Gaussian2D(0.75, 250, 400, 5, 7, theta=0.23)(x,y) +
-            Gaussian2D(0.9, 525, 150, 3, 3)(x,y) +
-            Gaussian2D(0.6, 200, 225, 3, 3)(x,y))
-    np.random.seed(123456)
-    data += 0.01 * np.random.randn(500, 600)
-    cosmic_ray_value = 0.997
-    data[100, 300:310] = cosmic_ray_value
-    plt.imshow(data, origin='lower')
+       import numpy as np
+       import matplotlib.pyplot as plt
+       from astropy.modeling.models import Gaussian2D
+       y, x = np.mgrid[0:500, 0:600]
+       data = (Gaussian2D(1, 150, 100, 20, 10, theta=0.5)(x, y) +
+               Gaussian2D(0.5, 400, 300, 8, 12, theta=1.2)(x,y) +
+               Gaussian2D(0.75, 250, 400, 5, 7, theta=0.23)(x,y) +
+               Gaussian2D(0.9, 525, 150, 3, 3)(x,y) +
+               Gaussian2D(0.6, 200, 225, 3, 3)(x,y))
+       np.random.seed(123456)
+       data += 0.01 * np.random.randn(500, 600)
+       cosmic_ray_value = 0.997
+       data[100, 300:310] = cosmic_ray_value
+       plt.imshow(data, origin='lower')
 
+   The "cosmic ray" can be masked out in this test image, like this::
 
-The "cosmic ray" can be masked out in this test image, like this::
-
-    >>> mask = (data == cosmic_ray_value)
-
-..
-  EXAMPLE END
+       >>> mask = (data == cosmic_ray_value)
 
 `~astropy.nddata.CCDData` Class for Images
 ------------------------------------------
@@ -211,33 +206,29 @@ propagation of uncertainties. Three uncertainty types are supported: variance
 Examples
 --------
 
-..
-  EXAMPLE START
-  Image Arithmetic Including Uncertainty in NDData
+.. example:: Image Arithmetic Including Uncertainty in NDData
+   :tags: astropy.nddata
 
-This example creates an uncertainty that is Poisson error, stored as a
-variance::
+   This example creates an uncertainty that is Poisson error, stored as a
+   variance::
 
-    >>> from astropy.nddata import VarianceUncertainty
-    >>> poisson_noise = np.ma.sqrt(np.ma.abs(ccd.data))
-    >>> ccd.uncertainty = VarianceUncertainty(poisson_noise ** 2)
+       >>> from astropy.nddata import VarianceUncertainty
+       >>> poisson_noise = np.ma.sqrt(np.ma.abs(ccd.data))
+       >>> ccd.uncertainty = VarianceUncertainty(poisson_noise ** 2)
 
-As a convenience, the uncertainty can also be set with a ``numpy`` array. In
-that case, the uncertainty is assumed to be the standard deviation::
+   As a convenience, the uncertainty can also be set with a ``numpy`` array. In
+   that case, the uncertainty is assumed to be the standard deviation::
 
-    >>> ccd.uncertainty = poisson_noise
-    INFO: array provided for uncertainty; assuming it is a StdDevUncertainty. [astropy.nddata.ccddata]
+       >>> ccd.uncertainty = poisson_noise
+       INFO: array provided for uncertainty; assuming it is a StdDevUncertainty. [astropy.nddata.ccddata]
 
-If we make a copy of the image and add that to the original, the uncertainty
-changes as expected::
+   If we make a copy of the image and add that to the original, the uncertainty
+   changes as expected::
 
-    >>> ccd2 = ccd.copy()
-    >>> added_ccds = ccd.add(ccd2, handle_meta='first_found')
-    >>> added_ccds.uncertainty.array[0, 0] / ccd.uncertainty.array[0, 0] / np.sqrt(2) # doctest: +FLOAT_CMP
-    0.99999999999999989
-
-..
-  EXAMPLE END
+       >>> ccd2 = ccd.copy()
+       >>> added_ccds = ccd.add(ccd2, handle_meta='first_found')
+       >>> added_ccds.uncertainty.array[0, 0] / ccd.uncertainty.array[0, 0] / np.sqrt(2) # doctest: +FLOAT_CMP
+       0.99999999999999989
 
 Reading and Writing
 -------------------
@@ -276,93 +267,89 @@ data.
 Examples
 ^^^^^^^^
 
-..
-  EXAMPLE START
-  Accessing Cutouts in NDData
+.. example:: Accessing Cutouts in NDData
+   :tags: astropy.nddata
 
-This example pulls out the large "galaxy" in the lower left of the image, with
-the center of the cutout at ``position``::
+   This example pulls out the large "galaxy" in the lower left of the image, with
+   the center of the cutout at ``position``::
 
-    >>> from astropy.nddata import Cutout2D
-    >>> position = (149.7, 100.1)
-    >>> size = (81, 101)     # pixels
-    >>> cutout = Cutout2D(ccd, position, size)
-    >>> plt.imshow(cutout.data, origin='lower') # doctest: +SKIP
+       >>> from astropy.nddata import Cutout2D
+       >>> position = (149.7, 100.1)
+       >>> size = (81, 101)     # pixels
+       >>> cutout = Cutout2D(ccd, position, size)
+       >>> plt.imshow(cutout.data, origin='lower') # doctest: +SKIP
 
-.. plot::
+   .. plot::
 
-    import numpy as np
-    import matplotlib.pyplot as plt
-    from astropy.modeling.models import Gaussian2D
-    from astropy.nddata import CCDData
-    from astropy.nddata import Cutout2D
-    y, x = np.mgrid[0:500, 0:600]
-    data = (Gaussian2D(1, 150, 100, 20, 10, theta=0.5)(x, y) +
-            Gaussian2D(0.5, 400, 300, 8, 12, theta=1.2)(x,y) +
-            Gaussian2D(0.75, 250, 400, 5, 7, theta=0.23)(x,y) +
-            Gaussian2D(0.9, 525, 150, 3, 3)(x,y) +
-            Gaussian2D(0.6, 200, 225, 3, 3)(x,y))
-    np.random.seed(123456)
-    data += 0.01 * np.random.randn(500, 600)
-    cosmic_ray_value = 0.997
-    data[100, 300:310] = cosmic_ray_value
-    mask = (data == cosmic_ray_value)
-    ccd = CCDData(data, mask=mask,
-                  meta={'object': 'fake galaxy', 'filter': 'R'},
-                  unit='adu')
-    position = (149.7, 100.1)
-    size = (81, 101)     # pixels
-    cutout = Cutout2D(ccd, position, size)
-    plt.imshow(cutout.data, origin='lower')
+       import numpy as np
+       import matplotlib.pyplot as plt
+       from astropy.modeling.models import Gaussian2D
+       from astropy.nddata import CCDData
+       from astropy.nddata import Cutout2D
+       y, x = np.mgrid[0:500, 0:600]
+       data = (Gaussian2D(1, 150, 100, 20, 10, theta=0.5)(x, y) +
+               Gaussian2D(0.5, 400, 300, 8, 12, theta=1.2)(x,y) +
+               Gaussian2D(0.75, 250, 400, 5, 7, theta=0.23)(x,y) +
+               Gaussian2D(0.9, 525, 150, 3, 3)(x,y) +
+               Gaussian2D(0.6, 200, 225, 3, 3)(x,y))
+       np.random.seed(123456)
+       data += 0.01 * np.random.randn(500, 600)
+       cosmic_ray_value = 0.997
+       data[100, 300:310] = cosmic_ray_value
+       mask = (data == cosmic_ray_value)
+       ccd = CCDData(data, mask=mask,
+                     meta={'object': 'fake galaxy', 'filter': 'R'},
+                     unit='adu')
+       position = (149.7, 100.1)
+       size = (81, 101)     # pixels
+       cutout = Cutout2D(ccd, position, size)
+       plt.imshow(cutout.data, origin='lower')
 
-This cutout can also plot itself on the original image::
+   This cutout can also plot itself on the original image::
 
-    >>> plt.imshow(ccd, origin='lower')  # doctest: +SKIP
-    >>> cutout.plot_on_original(color='white') # doctest: +SKIP
+       >>> plt.imshow(ccd, origin='lower')  # doctest: +SKIP
+       >>> cutout.plot_on_original(color='white') # doctest: +SKIP
 
-.. plot::
+   .. plot::
 
-    import numpy as np
-    import matplotlib.pyplot as plt
-    from astropy.modeling.models import Gaussian2D
-    from astropy.nddata import CCDData, Cutout2D
-    y, x = np.mgrid[0:500, 0:600]
-    data = (Gaussian2D(1, 150, 100, 20, 10, theta=0.5)(x, y) +
-            Gaussian2D(0.5, 400, 300, 8, 12, theta=1.2)(x,y) +
-            Gaussian2D(0.75, 250, 400, 5, 7, theta=0.23)(x,y) +
-            Gaussian2D(0.9, 525, 150, 3, 3)(x,y) +
-            Gaussian2D(0.6, 200, 225, 3, 3)(x,y))
-    np.random.seed(123456)
-    data += 0.01 * np.random.randn(500, 600)
-    cosmic_ray_value = 0.997
-    data[100, 300:310] = cosmic_ray_value
-    mask = (data == cosmic_ray_value)
-    ccd = CCDData(data, mask=mask,
-                  meta={'object': 'fake galaxy', 'filter': 'R'},
-                  unit='adu')
-    position = (149.7, 100.1)
-    size = (81, 101)     # pixels
-    cutout = Cutout2D(ccd, position, size)
-    plt.imshow(ccd, origin='lower')
-    cutout.plot_on_original(color='white')
+       import numpy as np
+       import matplotlib.pyplot as plt
+       from astropy.modeling.models import Gaussian2D
+       from astropy.nddata import CCDData, Cutout2D
+       y, x = np.mgrid[0:500, 0:600]
+       data = (Gaussian2D(1, 150, 100, 20, 10, theta=0.5)(x, y) +
+               Gaussian2D(0.5, 400, 300, 8, 12, theta=1.2)(x,y) +
+               Gaussian2D(0.75, 250, 400, 5, 7, theta=0.23)(x,y) +
+               Gaussian2D(0.9, 525, 150, 3, 3)(x,y) +
+               Gaussian2D(0.6, 200, 225, 3, 3)(x,y))
+       np.random.seed(123456)
+       data += 0.01 * np.random.randn(500, 600)
+       cosmic_ray_value = 0.997
+       data[100, 300:310] = cosmic_ray_value
+       mask = (data == cosmic_ray_value)
+       ccd = CCDData(data, mask=mask,
+                     meta={'object': 'fake galaxy', 'filter': 'R'},
+                     unit='adu')
+       position = (149.7, 100.1)
+       size = (81, 101)     # pixels
+       cutout = Cutout2D(ccd, position, size)
+       plt.imshow(ccd, origin='lower')
+       cutout.plot_on_original(color='white')
 
-The cutout also provides methods for finding pixel coordinates in the original
-or in the cutout; recall that ``position`` is the center of the cutout in the
-original image::
+   The cutout also provides methods for finding pixel coordinates in the original
+   or in the cutout; recall that ``position`` is the center of the cutout in the
+   original image::
 
-    >>> position
-    (149.7, 100.1)
-    >>> cutout.to_cutout_position(position)  # doctest: +FLOAT_CMP
-    (49.7, 40.099999999999994)
-    >>> cutout.to_original_position((49.7, 40.099999999999994))  # doctest: +FLOAT_CMP
-     (149.7, 100.1)
+       >>> position
+       (149.7, 100.1)
+       >>> cutout.to_cutout_position(position)  # doctest: +FLOAT_CMP
+       (49.7, 40.099999999999994)
+       >>> cutout.to_original_position((49.7, 40.099999999999994))  # doctest: +FLOAT_CMP
+        (149.7, 100.1)
 
-For more details, including constructing a cutout from World Coordinates and
-the options for handling cutouts that go beyond the bounds of the original
-image, see :ref:`cutout_images`.
-
-..
-  EXAMPLE END
+   For more details, including constructing a cutout from World Coordinates and
+   the options for handling cutouts that go beyond the bounds of the original
+   image, see :ref:`cutout_images`.
 
 Image Resizing
 ^^^^^^^^^^^^^^
@@ -373,50 +360,46 @@ The functions `~astropy.nddata.block_reduce` and
 Example
 ^^^^^^^
 
-..
-  EXAMPLE START
-  Image Resizing in NDData
+.. example:: Image Resizing in NDData
+   :tags: astropy.nddata
 
-This example reduces the size of the image by a factor of 4. Note that the
-result is a `numpy.ndarray`; the mask, metadata, etc. are discarded:
+   This example reduces the size of the image by a factor of 4. Note that the
+   result is a `numpy.ndarray`; the mask, metadata, etc. are discarded:
 
-.. doctest-requires:: skimage
+   .. doctest-requires:: skimage
 
-    >>> from astropy.nddata import block_reduce, block_replicate
-    >>> smaller = block_reduce(ccd, 4)
-    >>> smaller
-    array(...)
-    >>> plt.imshow(smaller, origin='lower')  # doctest: +SKIP
+       >>> from astropy.nddata import block_reduce, block_replicate
+       >>> smaller = block_reduce(ccd, 4)
+       >>> smaller
+       array(...)
+       >>> plt.imshow(smaller, origin='lower')  # doctest: +SKIP
 
-.. plot::
+   .. plot::
 
-    import numpy as np
-    import matplotlib.pyplot as plt
-    from astropy.modeling.models import Gaussian2D
-    from astropy.nddata import block_reduce, block_replicate
-    from astropy.nddata import CCDData, Cutout2D
-    y, x = np.mgrid[0:500, 0:600]
-    data = (Gaussian2D(1, 150, 100, 20, 10, theta=0.5)(x, y) +
-            Gaussian2D(0.5, 400, 300, 8, 12, theta=1.2)(x,y) +
-            Gaussian2D(0.75, 250, 400, 5, 7, theta=0.23)(x,y) +
-            Gaussian2D(0.9, 525, 150, 3, 3)(x,y) +
-            Gaussian2D(0.6, 200, 225, 3, 3)(x,y))
-    np.random.seed(123456)
-    data += 0.01 * np.random.randn(500, 600)
-    cosmic_ray_value = 0.997
-    data[100, 300:310] = cosmic_ray_value
-    mask = (data == cosmic_ray_value)
-    ccd = CCDData(data, mask=mask,
-                  meta={'object': 'fake galaxy', 'filter': 'R'},
-                  unit='adu')
-    smaller = block_reduce(ccd.data, 4)
-    plt.imshow(smaller, origin='lower')
+       import numpy as np
+       import matplotlib.pyplot as plt
+       from astropy.modeling.models import Gaussian2D
+       from astropy.nddata import block_reduce, block_replicate
+       from astropy.nddata import CCDData, Cutout2D
+       y, x = np.mgrid[0:500, 0:600]
+       data = (Gaussian2D(1, 150, 100, 20, 10, theta=0.5)(x, y) +
+               Gaussian2D(0.5, 400, 300, 8, 12, theta=1.2)(x,y) +
+               Gaussian2D(0.75, 250, 400, 5, 7, theta=0.23)(x,y) +
+               Gaussian2D(0.9, 525, 150, 3, 3)(x,y) +
+               Gaussian2D(0.6, 200, 225, 3, 3)(x,y))
+       np.random.seed(123456)
+       data += 0.01 * np.random.randn(500, 600)
+       cosmic_ray_value = 0.997
+       data[100, 300:310] = cosmic_ray_value
+       mask = (data == cosmic_ray_value)
+       ccd = CCDData(data, mask=mask,
+                     meta={'object': 'fake galaxy', 'filter': 'R'},
+                     unit='adu')
+       smaller = block_reduce(ccd.data, 4)
+       plt.imshow(smaller, origin='lower')
 
-By default, both `~astropy.nddata.block_reduce` and
-`~astropy.nddata.block_replicate` conserve flux.
-
-..
-  EXAMPLE END
+   By default, both `~astropy.nddata.block_reduce` and
+   `~astropy.nddata.block_replicate` conserve flux.
 
 Other Image Classes
 -------------------

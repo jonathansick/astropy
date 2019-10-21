@@ -61,32 +61,28 @@ individual bit flags that need to be ignored in the bit field.
 Example
 -------
 
-..
-  EXAMPLE START
-  Creating Boolean Masks from Bit Field Arrays
+.. example:: Creating Boolean Masks from Bit Field Arrays
+   :tags: astropy.nddata
 
-.. _table1:
+   .. _table1:
 
-.. table:: Table 1: Examples of Boolean Mask Computations \
-           (default parameters and 8-bit data type)
+   .. table:: Table 1: Examples of Boolean Mask Computations \
+              (default parameters and 8-bit data type)
 
-    +--------------+--------------+--------------+--------------+------------+
-    | Bit Field    |  Bit Mask    | ~(Bit Mask)  | Bit Field &  |Boolean Mask|
-    |              |              |              | ~(Bit Mask)  |            |
-    +==============+==============+==============+==============+============+
-    |11011001 (217)|01010000 (80) |10101111 (175)|10001001 (137)|   True     |
-    +--------------+--------------+--------------+--------------+------------+
-    |11011001 (217)|10101111 (175)|01010000 (80) |01010000 (80) |   True     |
-    +--------------+--------------+--------------+--------------+------------+
-    |00001001 (9)  |01001001 (73) |10110110 (182)|00000000 (0)  |   False    |
-    +--------------+--------------+--------------+--------------+------------+
-    |00001001 (9)  |00000000 (0)  |11111111 (255)|00001001 (9)  |   True     |
-    +--------------+--------------+--------------+--------------+------------+
-    |00001001 (9)  |11111111 (255)|00000000 (0)  |00000000 (0)  |   False    |
-    +--------------+--------------+--------------+--------------+------------+
-
-..
-  EXAMPLE END
+       +--------------+--------------+--------------+--------------+------------+
+       | Bit Field    |  Bit Mask    | ~(Bit Mask)  | Bit Field &  |Boolean Mask|
+       |              |              |              | ~(Bit Mask)  |            |
+       +==============+==============+==============+==============+============+
+       |11011001 (217)|01010000 (80) |10101111 (175)|10001001 (137)|   True     |
+       +--------------+--------------+--------------+--------------+------------+
+       |11011001 (217)|10101111 (175)|01010000 (80) |01010000 (80) |   True     |
+       +--------------+--------------+--------------+--------------+------------+
+       |00001001 (9)  |01001001 (73) |10110110 (182)|00000000 (0)  |   False    |
+       +--------------+--------------+--------------+--------------+------------+
+       |00001001 (9)  |00000000 (0)  |11111111 (255)|00001001 (9)  |   True     |
+       +--------------+--------------+--------------+--------------+------------+
+       |00001001 (9)  |11111111 (255)|00000000 (0)  |00000000 (0)  |   False    |
+       +--------------+--------------+--------------+--------------+------------+
 
 Specifying Bit Flags
 ====================
@@ -107,32 +103,28 @@ in `Table 1 <table1_>`_. In this case ``ignore_flags`` can be set either to:
 Example
 -------
 
-..
-  EXAMPLE START
-  Specifying Bit Flags in NDData
+.. example:: Specifying Bit Flags in NDData
+   :tags: astropy.nddata
 
-To specify bit flags:
+   To specify bit flags:
 
-    >>> from astropy.nddata import bitmask
-    >>> import numpy as np
-    >>> bitmask.bitfield_to_boolean_mask(217, ignore_flags=80)
-    array(True...)
-    >>> bitmask.bitfield_to_boolean_mask(217, ignore_flags='16,64')
-    array(True...)
-    >>> bitmask.bitfield_to_boolean_mask(217, ignore_flags=[16, 64])
-    array(True...)
-    >>> bitmask.bitfield_to_boolean_mask(9, ignore_flags=[1, 8, 64])
-    array(False...)
-    >>> bitmask.bitfield_to_boolean_mask([9, 10, 73, 217], ignore_flags='1,8,64')
-    array([False,  True, False,  True]...)
+       >>> from astropy.nddata import bitmask
+       >>> import numpy as np
+       >>> bitmask.bitfield_to_boolean_mask(217, ignore_flags=80)
+       array(True...)
+       >>> bitmask.bitfield_to_boolean_mask(217, ignore_flags='16,64')
+       array(True...)
+       >>> bitmask.bitfield_to_boolean_mask(217, ignore_flags=[16, 64])
+       array(True...)
+       >>> bitmask.bitfield_to_boolean_mask(9, ignore_flags=[1, 8, 64])
+       array(False...)
+       >>> bitmask.bitfield_to_boolean_mask([9, 10, 73, 217], ignore_flags='1,8,64')
+       array([False,  True, False,  True]...)
 
-It is also possible to specify the type of the output mask:
+   It is also possible to specify the type of the output mask:
 
-    >>> bitmask.bitfield_to_boolean_mask([9, 10, 73, 217], ignore_flags='1,8,64', dtype=np.uint8)
-    array([0, 1, 0, 1], dtype=uint8)
-
-..
-  EXAMPLE END
+       >>> bitmask.bitfield_to_boolean_mask([9, 10, 73, 217], ignore_flags='1,8,64', dtype=np.uint8)
+       array([0, 1, 0, 1], dtype=uint8)
 
 Modifying the Formula for Creating Boolean Masks
 ================================================
@@ -150,41 +142,37 @@ flags should be ignored.
 Example
 -------
 
-..
-  EXAMPLE START
-  Inverting Bit Masks in NDData
+.. example:: Inverting Bit Masks in NDData
+   :tags: astropy.nddata
 
-In `~astropy.nddata.bitmask.bitfield_to_boolean_mask` specifying bit flags that
-must be considered when creating the boolean mask can be accomplished by
-setting the parameter ``flip_bits`` to `True`. This effectively modifies
-`equation (1) <main_eq_>`_ to:
+   In `~astropy.nddata.bitmask.bitfield_to_boolean_mask` specifying bit flags that
+   must be considered when creating the boolean mask can be accomplished by
+   setting the parameter ``flip_bits`` to `True`. This effectively modifies
+   `equation (1) <main_eq_>`_ to:
 
-.. _modif_eq2:
+   .. _modif_eq2:
 
-``(2)    boolean_mask = (bitfield & bit_mask) != 0``
+   ``(2)    boolean_mask = (bitfield & bit_mask) != 0``
 
-So, instead of:
+   So, instead of:
 
-    >>> bitmask.bitfield_to_boolean_mask([9, 10, 73, 217], ignore_flags=[1, 8, 64])
-    array([False,  True, False,  True]...)
+       >>> bitmask.bitfield_to_boolean_mask([9, 10, 73, 217], ignore_flags=[1, 8, 64])
+       array([False,  True, False,  True]...)
 
-You can obtain the same result as:
+   You can obtain the same result as:
 
-    >>> bitmask.bitfield_to_boolean_mask(
-    ...     [9, 10, 73, 217], ignore_flags=[2, 4, 16, 32, 128], flip_bits=True
-    ... )
-    array([False,  True, False,  True]...)
+       >>> bitmask.bitfield_to_boolean_mask(
+       ...     [9, 10, 73, 217], ignore_flags=[2, 4, 16, 32, 128], flip_bits=True
+       ... )
+       array([False,  True, False,  True]...)
 
-Note however, when ``ignore_flags`` is a comma-separated list of bit flag
-values, ``flip_bits`` cannot be set to either `True` or `False`. Instead,
-to flip bits of the bit mask formed from a string list of comma-separated
-bit flag values, you can prepend a single ``~`` to the list:
+   Note however, when ``ignore_flags`` is a comma-separated list of bit flag
+   values, ``flip_bits`` cannot be set to either `True` or `False`. Instead,
+   to flip bits of the bit mask formed from a string list of comma-separated
+   bit flag values, you can prepend a single ``~`` to the list:
 
-    >>> bitmask.bitfield_to_boolean_mask([9, 10, 73, 217], ignore_flags='~2+4+16+32+128')
-    array([False,  True, False,  True]...)
-
-..
-  EXAMPLE END
+       >>> bitmask.bitfield_to_boolean_mask([9, 10, 73, 217], ignore_flags='~2+4+16+32+128')
+       array([False,  True, False,  True]...)
 
 Inverting Boolean Masks
 -----------------------
@@ -202,16 +190,12 @@ its default value (`False`) to `True`.
 Example
 -------
 
-..
-  EXAMPLE START
-  Inverting Boolean Masks in NDData
+.. example:: Inverting Boolean Masks in NDData
+   :tags: astropy.nddata
 
-To obtain an inverted mask in which flagged data are converted to `False`
-instead of `True`:
+   To obtain an inverted mask in which flagged data are converted to `False`
+   instead of `True`:
 
-    >>> bitmask.bitfield_to_boolean_mask([9, 10, 73, 217], ignore_flags=[1, 8, 64],
-    ...                                  good_mask_value=True)
-    array([ True, False,  True, False]...)
-
-..
-  EXAMPLE END
+       >>> bitmask.bitfield_to_boolean_mask([9, 10, 73, 217], ignore_flags=[1, 8, 64],
+       ...                                  good_mask_value=True)
+       array([ True, False,  True, False]...)

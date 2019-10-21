@@ -129,49 +129,45 @@ it within the framework of `~astropy.units.Quantity`.
 Examples
 --------
 
-..
-  EXAMPLE START
-  Adding Operations When Working with NDDataRef
+.. example:: Adding Operations When Working with NDDataRef
+   :tags: astropy.nddata
 
-To add a power function::
+   To add a power function::
 
-    >>> from astropy.nddata import NDDataRef
-    >>> import numpy as np
-    >>> from astropy.utils import sharedmethod
+       >>> from astropy.nddata import NDDataRef
+       >>> import numpy as np
+       >>> from astropy.utils import sharedmethod
 
-    >>> class NDDataPower(NDDataRef):
-    ...     @sharedmethod # sharedmethod to allow it also as classmethod
-    ...     def pow(self, operand, operand2=None, **kwargs):
-    ...         # the uncertainty doesn't allow propagation so set it to None
-    ...         kwargs['propagate_uncertainties'] = None
-    ...         # Call the _prepare_then_do_arithmetic function with the
-    ...         # numpy.power ufunc.
-    ...         return self._prepare_then_do_arithmetic(np.power, operand,
-    ...                                                 operand2, **kwargs)
+       >>> class NDDataPower(NDDataRef):
+       ...     @sharedmethod # sharedmethod to allow it also as classmethod
+       ...     def pow(self, operand, operand2=None, **kwargs):
+       ...         # the uncertainty doesn't allow propagation so set it to None
+       ...         kwargs['propagate_uncertainties'] = None
+       ...         # Call the _prepare_then_do_arithmetic function with the
+       ...         # numpy.power ufunc.
+       ...         return self._prepare_then_do_arithmetic(np.power, operand,
+       ...                                                 operand2, **kwargs)
 
-This can be used like the other arithmetic methods similar to
-:meth:`~astropy.nddata.NDArithmeticMixin.add`. So it works when calling it
-on the class or the instance::
+   This can be used like the other arithmetic methods similar to
+   :meth:`~astropy.nddata.NDArithmeticMixin.add`. So it works when calling it
+   on the class or the instance::
 
-    >>> ndd = NDDataPower([1,2,3])
+       >>> ndd = NDDataPower([1,2,3])
 
-    >>> # using it on the instance with one operand
-    >>> ndd.pow(3)
-    NDDataPower([ 1,  8, 27])
+       >>> # using it on the instance with one operand
+       >>> ndd.pow(3)
+       NDDataPower([ 1,  8, 27])
 
-    >>> # using it on the instance with two operands
-    >>> ndd.pow([1,2,3], [3,4,5])
-    NDDataPower([  1,  16, 243])
+       >>> # using it on the instance with two operands
+       >>> ndd.pow([1,2,3], [3,4,5])
+       NDDataPower([  1,  16, 243])
 
-    >>> # or using it as classmethod
-    >>> NDDataPower.pow(6, [1,2,3])
-    NDDataPower([  6,  36, 216])
+       >>> # or using it as classmethod
+       >>> NDDataPower.pow(6, [1,2,3])
+       NDDataPower([  6,  36, 216])
 
-To allow propagation also with ``uncertainty`` see subclassing
-`~astropy.nddata.NDUncertainty`.
-
-..
-  EXAMPLE END
+   To allow propagation also with ``uncertainty`` see subclassing
+   `~astropy.nddata.NDUncertainty`.
 
 The ``_prepare_then_do_arithmetic`` implements the relevant checks if it was
 called on the class or the instance, and if one or two operands were given,
@@ -191,58 +187,54 @@ done in a method ``_arithmetic_*`` where ``*`` is the name of the property.
 Examples
 --------
 
-..
-  EXAMPLE START
-  Customizing Existing Properties During Arithmetic in NDData
+.. example:: Customizing Existing Properties During Arithmetic in NDData
+   :tags: astropy.nddata
 
-To customize how the ``meta`` will be affected during arithmetics::
+   To customize how the ``meta`` will be affected during arithmetics::
 
-    >>> from astropy.nddata import NDDataRef
+       >>> from astropy.nddata import NDDataRef
 
-    >>> from copy import deepcopy
-    >>> class NDDataWithMetaArithmetics(NDDataRef):
-    ...
-    ...     def _arithmetic_meta(self, operation, operand, handle_mask, **kwds):
-    ...         # the function must take the arguments:
-    ...         # operation (numpy-ufunc like np.add, np.subtract, ...)
-    ...         # operand (the other NDData-like object, already wrapped as NDData)
-    ...         # handle_mask (see description for "add")
-    ...
-    ...         # The meta is dict like but we want the keywords exposure to change
-    ...         # Anticipate that one or both might have no meta and take the first one that has
-    ...         result_meta = deepcopy(self.meta) if self.meta else deepcopy(operand.meta)
-    ...         # Do the operation on the keyword if the keyword exists
-    ...         if result_meta and 'exposure' in result_meta:
-    ...             result_meta['exposure'] = operation(result_meta['exposure'], operand.data)
-    ...         return result_meta # return it
+       >>> from copy import deepcopy
+       >>> class NDDataWithMetaArithmetics(NDDataRef):
+       ...
+       ...     def _arithmetic_meta(self, operation, operand, handle_mask, **kwds):
+       ...         # the function must take the arguments:
+       ...         # operation (numpy-ufunc like np.add, np.subtract, ...)
+       ...         # operand (the other NDData-like object, already wrapped as NDData)
+       ...         # handle_mask (see description for "add")
+       ...
+       ...         # The meta is dict like but we want the keywords exposure to change
+       ...         # Anticipate that one or both might have no meta and take the first one that has
+       ...         result_meta = deepcopy(self.meta) if self.meta else deepcopy(operand.meta)
+       ...         # Do the operation on the keyword if the keyword exists
+       ...         if result_meta and 'exposure' in result_meta:
+       ...             result_meta['exposure'] = operation(result_meta['exposure'], operand.data)
+       ...         return result_meta # return it
 
-To trigger this method, the ``handle_meta`` argument to arithmetic methods can
-be anything except ``None`` or ``"first_found"``::
+   To trigger this method, the ``handle_meta`` argument to arithmetic methods can
+   be anything except ``None`` or ``"first_found"``::
 
-    >>> ndd = NDDataWithMetaArithmetics([1,2,3], meta={'exposure': 10})
-    >>> ndd2 = ndd.add(10, handle_meta='')
-    >>> ndd2.meta
-    {'exposure': 20}
+       >>> ndd = NDDataWithMetaArithmetics([1,2,3], meta={'exposure': 10})
+       >>> ndd2 = ndd.add(10, handle_meta='')
+       >>> ndd2.meta
+       {'exposure': 20}
 
-    >>> ndd3 = ndd.multiply(0.5, handle_meta='')
-    >>> ndd3.meta
-    {'exposure': 5.0}
+       >>> ndd3 = ndd.multiply(0.5, handle_meta='')
+       >>> ndd3.meta
+       {'exposure': 5.0}
 
-.. warning::
-  To use these internal `_arithmetic_*` methods there are some restrictions on
-  the attributes when calling the operation:
+   .. warning::
+     To use these internal `_arithmetic_*` methods there are some restrictions on
+     the attributes when calling the operation:
 
-  - ``mask``: ``handle_mask`` must not be ``None``, ``"ff"``, or
-    ``"first_found"``.
-  - ``wcs``: ``compare_wcs`` argument with the same restrictions as mask.
-  - ``meta``: ``handle_meta`` argument with the same restrictions as mask.
-  - ``uncertainty``: ``propagate_uncertainties`` must be ``None`` or evaluate
-    to ``False``. ``arithmetic_uncertainty`` must also accept different
-    arguments: ``operation``, ``operand``, ``result``, ``correlation``,
-    ``**kwargs``.
-
-..
-  EXAMPLE END
+     - ``mask``: ``handle_mask`` must not be ``None``, ``"ff"``, or
+       ``"first_found"``.
+     - ``wcs``: ``compare_wcs`` argument with the same restrictions as mask.
+     - ``meta``: ``handle_meta`` argument with the same restrictions as mask.
+     - ``uncertainty``: ``propagate_uncertainties`` must be ``None`` or evaluate
+       to ``False``. ``arithmetic_uncertainty`` must also accept different
+       arguments: ``operation``, ``operand``, ``result``, ``correlation``,
+       ``**kwargs``.
 
 Changing the Default Argument for Arithmetic Operations
 -------------------------------------------------------
@@ -256,41 +248,37 @@ default value of existing parameters by changing it in the method signature of
 Example
 -------
 
-..
-  EXAMPLE START
-  Changing the Default Argument for Arithmetic Operations in NDData
+.. example:: Changing the Default Argument for Arithmetic Operations in NDData
+   :tags: astropy.nddata
 
-To change the default value of an existing parameter for arithmetic methods::
+   To change the default value of an existing parameter for arithmetic methods::
 
-    >>> from astropy.nddata import NDDataRef
-    >>> import numpy as np
+       >>> from astropy.nddata import NDDataRef
+       >>> import numpy as np
 
-    >>> class NDDDiffAritDefaults(NDDataRef):
-    ...     def _arithmetic(self, *args, **kwargs):
-    ...         # Changing the default of handle_mask to None
-    ...         if 'handle_mask' not in kwargs:
-    ...             kwargs['handle_mask'] = None
-    ...         # Call the original with the updated kwargs
-    ...         return super()._arithmetic(*args, **kwargs)
+       >>> class NDDDiffAritDefaults(NDDataRef):
+       ...     def _arithmetic(self, *args, **kwargs):
+       ...         # Changing the default of handle_mask to None
+       ...         if 'handle_mask' not in kwargs:
+       ...             kwargs['handle_mask'] = None
+       ...         # Call the original with the updated kwargs
+       ...         return super()._arithmetic(*args, **kwargs)
 
-    >>> ndd1 = NDDDiffAritDefaults(1, mask=False)
-    >>> ndd2 = NDDDiffAritDefaults(1, mask=True)
-    >>> ndd1.add(ndd2).mask is None  # it will be None
-    True
+       >>> ndd1 = NDDDiffAritDefaults(1, mask=False)
+       >>> ndd2 = NDDDiffAritDefaults(1, mask=True)
+       >>> ndd1.add(ndd2).mask is None  # it will be None
+       True
 
-    >>> # But giving other values is still possible:
-    >>> ndd1.add(ndd2, handle_mask=np.logical_or).mask
-    True
+       >>> # But giving other values is still possible:
+       >>> ndd1.add(ndd2, handle_mask=np.logical_or).mask
+       True
 
-    >>> ndd1.add(ndd2, handle_mask="ff").mask
-    False
+       >>> ndd1.add(ndd2, handle_mask="ff").mask
+       False
 
-The parameter controlling how properties are handled are all keyword-only
-so using the ``*args``, ``**kwargs`` approach allows you to only alter one
-default without needing to care about the positional order of arguments.
-
-..
-  EXAMPLE END
+   The parameter controlling how properties are handled are all keyword-only
+   so using the ``*args``, ``**kwargs`` approach allows you to only alter one
+   default without needing to care about the positional order of arguments.
 
 Arithmetic with an Additional Property
 --------------------------------------
@@ -426,57 +414,53 @@ it may be more convenient to subclass `~astropy.nddata.NDData` instead of
 Example
 -------
 
-..
-  EXAMPLE START
-  Implementing the NDDataBase Interface
+.. example:: Implementing the NDDataBase Interface
+   :tags: astropy.nddata
 
-To implement the NDDataBase interface by creating a read-only container::
+   To implement the NDDataBase interface by creating a read-only container::
 
-    >>> from astropy.nddata import NDDataBase
+       >>> from astropy.nddata import NDDataBase
 
-    >>> class NDDataReadOnlyNoRestrictions(NDDataBase):
-    ...     def __init__(self, data, unit, mask, uncertainty, meta, wcs):
-    ...         self._data = data
-    ...         self._unit = unit
-    ...         self._mask = mask
-    ...         self._uncertainty = uncertainty
-    ...         self._meta = meta
-    ...         self._wcs = wcs
-    ...
-    ...     @property
-    ...     def data(self):
-    ...         return self._data
-    ...
-    ...     @property
-    ...     def unit(self):
-    ...         return self._unit
-    ...
-    ...     @property
-    ...     def mask(self):
-    ...         return self._mask
-    ...
-    ...     @property
-    ...     def uncertainty(self):
-    ...         return self._uncertainty
-    ...
-    ...     @property
-    ...     def meta(self):
-    ...         return self._meta
-    ...
-    ...     @property
-    ...     def wcs(self):
-    ...         return self._wcs
+       >>> class NDDataReadOnlyNoRestrictions(NDDataBase):
+       ...     def __init__(self, data, unit, mask, uncertainty, meta, wcs):
+       ...         self._data = data
+       ...         self._unit = unit
+       ...         self._mask = mask
+       ...         self._uncertainty = uncertainty
+       ...         self._meta = meta
+       ...         self._wcs = wcs
+       ...
+       ...     @property
+       ...     def data(self):
+       ...         return self._data
+       ...
+       ...     @property
+       ...     def unit(self):
+       ...         return self._unit
+       ...
+       ...     @property
+       ...     def mask(self):
+       ...         return self._mask
+       ...
+       ...     @property
+       ...     def uncertainty(self):
+       ...         return self._uncertainty
+       ...
+       ...     @property
+       ...     def meta(self):
+       ...         return self._meta
+       ...
+       ...     @property
+       ...     def wcs(self):
+       ...         return self._wcs
 
-    >>> # A meaningless test to show that creating this class is possible:
-    >>> NDDataReadOnlyNoRestrictions(1,2,3,4,5,6) is not None
-    True
+       >>> # A meaningless test to show that creating this class is possible:
+       >>> NDDataReadOnlyNoRestrictions(1,2,3,4,5,6) is not None
+       True
 
-.. note::
-  Actually defining an ``__init__`` is not necessary and the properties could
-  return arbitrary values but the properties **must** be defined.
-
-..
-  EXAMPLE END
+   .. note::
+     Actually defining an ``__init__`` is not necessary and the properties could
+     return arbitrary values but the properties **must** be defined.
 
 Subclassing `~astropy.nddata.NDUncertainty`
 ===========================================
