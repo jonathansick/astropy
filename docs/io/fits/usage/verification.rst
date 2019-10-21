@@ -192,106 +192,102 @@ possibilities.
 Examples
 --------
 
-..
-  EXAMPLE START
-  Verification at Each Card in astropy.io.fits
+.. example:: Verification at Each Card in astropy.io.fits
+   :tags: astropy.io.fits
 
-Here is a list of fixable and not fixable Cards:
+   Here is a list of fixable and not fixable Cards:
 
-Fixable Cards:
+   Fixable Cards:
 
-1. Floating point numbers with lower case 'e' or 'd'::
+   1. Floating point numbers with lower case 'e' or 'd'::
 
-    >>> from astropy.io import fits
-    >>> c = fits.Card.fromstring('FIX1    = 2.1e23')
-    >>> c.verify('silentfix')
-    >>> print(c)
-    FIX1    =               2.1E23
+       >>> from astropy.io import fits
+       >>> c = fits.Card.fromstring('FIX1    = 2.1e23')
+       >>> c.verify('silentfix')
+       >>> print(c)
+       FIX1    =               2.1E23
 
-2. The equal sign is before column nine in the card image::
+   2. The equal sign is before column nine in the card image::
 
-    >>> c = fits.Card.fromstring('FIX2= 2')
-    >>> c.verify('silentfix')
-    >>> print(c)
-    FIX2    =                    2
+       >>> c = fits.Card.fromstring('FIX2= 2')
+       >>> c.verify('silentfix')
+       >>> print(c)
+       FIX2    =                    2
 
-3. String value without enclosing quotes::
+   3. String value without enclosing quotes::
 
-    >>> c = fits.Card.fromstring('FIX3    = string value without quotes')
-    >>> c.verify('silentfix')
-    >>> print(c)
-    FIX3    = 'string value without quotes'
+       >>> c = fits.Card.fromstring('FIX3    = string value without quotes')
+       >>> c.verify('silentfix')
+       >>> print(c)
+       FIX3    = 'string value without quotes'
 
-4. Missing equal sign before column nine in the card image.
+   4. Missing equal sign before column nine in the card image.
 
-5. Space between numbers and E or D in floating point values::
+   5. Space between numbers and E or D in floating point values::
 
-    >>> c = fits.Card.fromstring('FIX5    = 2.4 e 03')
-    >>> c.verify('silentfix')
-    >>> print(c)
-    FIX5    =               2.4E03
+       >>> c = fits.Card.fromstring('FIX5    = 2.4 e 03')
+       >>> c.verify('silentfix')
+       >>> print(c)
+       FIX5    =               2.4E03
 
-6. Unparsable values will be "fixed" as a string::
+   6. Unparsable values will be "fixed" as a string::
 
-    >>> c = fits.Card.fromstring('FIX6    = 2 10 ')
-    >>> c.verify('fix+warn')
-    >>> print(c)
-    FIX6    = '2 10    '
+       >>> c = fits.Card.fromstring('FIX6    = 2 10 ')
+       >>> c.verify('fix+warn')
+       >>> print(c)
+       FIX6    = '2 10    '
 
-Unfixable Cards:
+   Unfixable Cards:
 
-1. Illegal characters in keyword name.
+   1. Illegal characters in keyword name.
 
-We will summarize the verification with a "life-cycle" example:
+   We will summarize the verification with a "life-cycle" example:
 
-.. doctest-skip::
+   .. doctest-skip::
 
-    >>> h = fits.PrimaryHDU()  # create a PrimaryHDU
-    >>> # Try to add an non-standard FITS keyword 'P.I.' (FITS does no allow
-    >>> # '.' in the keyword), if using the update() method - doesn't work!
-    >>> h['P.I.'] = 'Hubble'
-    ValueError: Illegal keyword name 'P.I.'
-    >>> # Have to do it the hard way (so a user will not do this by accident)
-    >>> # First, create a card image and give verbatim card content (including
-    >>> # the proper spacing, but no need to add the trailing blanks)
-    >>> c = fits.Card.fromstring("P.I. = 'Hubble'")
-    >>> h.header.append(c)  # then append it to the header
-    >>> # Now if we try to write to a FITS file, the default output
-    >>> # verification will not take it.
-    >>> h.writeto('pi.fits')
-    Output verification result:
-    HDU 0:
-      Card 4:
-        Unfixable error: Illegal keyword name 'P.I.'
-    ......
-      raise VerifyError
-    VerifyError
-    >>> # Must set the output_verify argument to 'ignore', to force writing a
-    >>> # non-standard FITS file
-    >>> h.writeto('pi.fits', output_verify='ignore')
-    >>> # Now reading a non-standard FITS file
-    >>> # astropy.io.fits is magnanimous in reading non-standard FITS files
-    >>> hdus = fits.open('pi.fits')
-    >>> hdus[0].header
-    SIMPLE =            T / conforms to FITS standard
-    BITPIX =            8 / array data type
-    NAXIS  =            0 / number of array dimensions
-    EXTEND =            T
-    P.I.   = 'Hubble'
-    >>> # even when you try to access the offending keyword, it does NOT
-    >>> # complain
-    >>> hdus[0].header['p.i.']
-    'Hubble'
-    >>> # But if you want to make sure if there is anything wrong/non-standard,
-    >>> # use the verify() method
-    >>> hdus.verify()
-    Output verification result:
-    HDU 0:
-      Card 4:
-        Unfixable error: Illegal keyword name 'P.I.'
-
-..
-  EXAMPLE END
+       >>> h = fits.PrimaryHDU()  # create a PrimaryHDU
+       >>> # Try to add an non-standard FITS keyword 'P.I.' (FITS does no allow
+       >>> # '.' in the keyword), if using the update() method - doesn't work!
+       >>> h['P.I.'] = 'Hubble'
+       ValueError: Illegal keyword name 'P.I.'
+       >>> # Have to do it the hard way (so a user will not do this by accident)
+       >>> # First, create a card image and give verbatim card content (including
+       >>> # the proper spacing, but no need to add the trailing blanks)
+       >>> c = fits.Card.fromstring("P.I. = 'Hubble'")
+       >>> h.header.append(c)  # then append it to the header
+       >>> # Now if we try to write to a FITS file, the default output
+       >>> # verification will not take it.
+       >>> h.writeto('pi.fits')
+       Output verification result:
+       HDU 0:
+         Card 4:
+           Unfixable error: Illegal keyword name 'P.I.'
+       ......
+         raise VerifyError
+       VerifyError
+       >>> # Must set the output_verify argument to 'ignore', to force writing a
+       >>> # non-standard FITS file
+       >>> h.writeto('pi.fits', output_verify='ignore')
+       >>> # Now reading a non-standard FITS file
+       >>> # astropy.io.fits is magnanimous in reading non-standard FITS files
+       >>> hdus = fits.open('pi.fits')
+       >>> hdus[0].header
+       SIMPLE =            T / conforms to FITS standard
+       BITPIX =            8 / array data type
+       NAXIS  =            0 / number of array dimensions
+       EXTEND =            T
+       P.I.   = 'Hubble'
+       >>> # even when you try to access the offending keyword, it does NOT
+       >>> # complain
+       >>> hdus[0].header['p.i.']
+       'Hubble'
+       >>> # But if you want to make sure if there is anything wrong/non-standard,
+       >>> # use the verify() method
+       >>> hdus.verify()
+       Output verification result:
+       HDU 0:
+         Card 4:
+           Unfixable error: Illegal keyword name 'P.I.'
 
 Verification Using the FITS Checksum Keyword Convention
 =======================================================
@@ -329,48 +325,44 @@ header by supplying the checksum keyword argument with a value of 'datasum'.
 Examples
 --------
 
-..
-  EXAMPLE START
-  Verification Using the FITS Checksum Keyword Convention
+.. example:: Verification Using the FITS Checksum Keyword Convention
+   :tags: astropy.io.fits
 
-To verify the checksum values for HDUs when opening a file:
+   To verify the checksum values for HDUs when opening a file:
 
-.. doctest-skip::
+   .. doctest-skip::
 
-     >>> # Open the file pix.fits verifying the checksum values for all HDUs
-     >>> hdul = fits.open('pix.fits', checksum=True)
+        >>> # Open the file pix.fits verifying the checksum values for all HDUs
+        >>> hdul = fits.open('pix.fits', checksum=True)
 
-.. doctest-skip::
+   .. doctest-skip::
 
-     >>> # Open the file in.fits where checksum verification fails for the
-     >>> # primary HDU
-     >>> hdul = fits.open('in.fits', checksum=True)
-     Warning:  Checksum verification failed for HDU #0.
+        >>> # Open the file in.fits where checksum verification fails for the
+        >>> # primary HDU
+        >>> hdul = fits.open('in.fits', checksum=True)
+        Warning:  Checksum verification failed for HDU #0.
 
-.. doctest-skip::
+   .. doctest-skip::
 
-     >>> # Create file out.fits containing an HDU constructed from data and
-     >>> # header containing both CHECKSUM and DATASUM cards.
-     >>> fits.writeto('out.fits', data, header, checksum=True)
+        >>> # Create file out.fits containing an HDU constructed from data and
+        >>> # header containing both CHECKSUM and DATASUM cards.
+        >>> fits.writeto('out.fits', data, header, checksum=True)
 
-.. doctest-skip::
+   .. doctest-skip::
 
-     >>> # Create file out.fits containing all the HDUs in the HDULIST
-     >>> # hdul with each HDU header containing only the DATASUM card
-     >>> hdul.writeto('out.fits', checksum='datasum')
+        >>> # Create file out.fits containing all the HDUs in the HDULIST
+        >>> # hdul with each HDU header containing only the DATASUM card
+        >>> hdul.writeto('out.fits', checksum='datasum')
 
-.. doctest-skip::
+   .. doctest-skip::
 
-     >>> # Create file out.fits containing the HDU hdu with both CHECKSUM
-     >>> # and DATASUM cards in the header
-     >>> hdu.writeto('out.fits', checksum=True)
+        >>> # Create file out.fits containing the HDU hdu with both CHECKSUM
+        >>> # and DATASUM cards in the header
+        >>> hdu.writeto('out.fits', checksum=True)
 
-.. doctest-skip::
+   .. doctest-skip::
 
-     >>> # Append a new HDU constructed from array data to the end of
-     >>> # the file existingfile.fits with only the appended HDU
-     >>> # containing both CHECKSUM and DATASUM cards.
-     >>> fits.append('existingfile.fits', data, checksum=True)
-
-..
-  EXAMPLE END
+        >>> # Append a new HDU constructed from array data to the end of
+        >>> # the file existingfile.fits with only the appended HDU
+        >>> # containing both CHECKSUM and DATASUM cards.
+        >>> fits.append('existingfile.fits', data, checksum=True)

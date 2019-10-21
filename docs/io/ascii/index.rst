@@ -86,53 +86,49 @@ the format.
 Examples
 --------
 
-..
-  EXAMPLE START
-  Reading ASCII Tables Using astropy.io.ascii
+.. example:: Reading ASCII Tables Using astropy.io.ascii
+   :tags: astropy.io.ascii
 
-For unusually formatted tables, give additional hints about the format::
+   For unusually formatted tables, give additional hints about the format::
 
-   >>> lines = ['objID                   & osrcid            & xsrcid       ',
-   ...          '----------------------- & ----------------- & -------------',
-   ...          '              277955213 & S000.7044P00.7513 & XS04861B6_005',
-   ...          '              889974380 & S002.9051P14.7003 & XS03957B7_004']
-   >>> data = ascii.read(lines, data_start=2, delimiter='&')
-   >>> print(data)
-     objID         osrcid          xsrcid
-   --------- ----------------- -------------
-   277955213 S000.7044P00.7513 XS04861B6_005
-   889974380 S002.9051P14.7003 XS03957B7_004
+      >>> lines = ['objID                   & osrcid            & xsrcid       ',
+      ...          '----------------------- & ----------------- & -------------',
+      ...          '              277955213 & S000.7044P00.7513 & XS04861B6_005',
+      ...          '              889974380 & S002.9051P14.7003 & XS03957B7_004']
+      >>> data = ascii.read(lines, data_start=2, delimiter='&')
+      >>> print(data)
+        objID         osrcid          xsrcid
+      --------- ----------------- -------------
+      277955213 S000.7044P00.7513 XS04861B6_005
+      889974380 S002.9051P14.7003 XS03957B7_004
 
-If the format of a file is known (e.g., it is a fixed-width table or an IPAC
-table), then it is more efficient and reliable to provide a value for the
-``format`` argument from one of the values in the `supported formats`_. For
-example::
+   If the format of a file is known (e.g., it is a fixed-width table or an IPAC
+   table), then it is more efficient and reliable to provide a value for the
+   ``format`` argument from one of the values in the `supported formats`_. For
+   example::
 
-   >>> data = ascii.read(lines, format='fixed_width_two_line', delimiter='&')
+      >>> data = ascii.read(lines, format='fixed_width_two_line', delimiter='&')
 
-For simpler formats such as CSV, |read| will automatically try reading with the
-Cython/C parsing engine, which is significantly faster than the ordinary Python
-implementation (described in :ref:`fast_ascii_io`). If the fast engine fails,
-|read| will fall back on the Python reader by default. The argument
-``fast_reader`` can be specified to control this behavior. For example, to
-disable the fast engine::
+   For simpler formats such as CSV, |read| will automatically try reading with the
+   Cython/C parsing engine, which is significantly faster than the ordinary Python
+   implementation (described in :ref:`fast_ascii_io`). If the fast engine fails,
+   |read| will fall back on the Python reader by default. The argument
+   ``fast_reader`` can be specified to control this behavior. For example, to
+   disable the fast engine::
 
-   >>> data = ascii.read(lines, format='csv', fast_reader=False)
+      >>> data = ascii.read(lines, format='csv', fast_reader=False)
 
-For reading very large tables see the section on :ref:`chunk_reading` or
-use `pandas <https://pandas.pydata.org/>`_ (see Note below).
+   For reading very large tables see the section on :ref:`chunk_reading` or
+   use `pandas <https://pandas.pydata.org/>`_ (see Note below).
 
-.. Note::
+   .. Note::
 
-   Reading a table which contains unicode characters is supported with the
-   pure Python readers by specifying the ``encoding`` parameter. The fast
-   C-readers do not support unicode. For large data files containing unicode,
-   we recommend reading the file using `pandas <https://pandas.pydata.org/>`_
-   and converting to a :ref:`Table <astropy-table>` via the :ref:`Table -
-   Pandas interface <pandas>`.
-
-..
-  EXAMPLE END
+      Reading a table which contains unicode characters is supported with the
+      pure Python readers by specifying the ``encoding`` parameter. The fast
+      C-readers do not support unicode. For large data files containing unicode,
+      we recommend reading the file using `pandas <https://pandas.pydata.org/>`_
+      and converting to a :ref:`Table <astropy-table>` via the :ref:`Table -
+      Pandas interface <pandas>`.
 
 Writing Tables
 --------------
@@ -143,91 +139,87 @@ table.
 Examples
 --------
 
-..
-  EXAMPLE START
-  Writing Data Tables as Formatted ASCII Tables
+.. example:: Writing Data Tables as Formatted ASCII Tables
+   :tags: astropy.io.ascii
 
-The following writes a table as a simple space-delimited file::
+   The following writes a table as a simple space-delimited file::
 
-  >>> import numpy as np
-  >>> from astropy.table import Table, Column, MaskedColumn
-  >>> x = np.array([1, 2, 3])
-  >>> y = x ** 2
-  >>> data = Table([x, y], names=['x', 'y'])
-  >>> ascii.write(data, 'values.dat')
+     >>> import numpy as np
+     >>> from astropy.table import Table, Column, MaskedColumn
+     >>> x = np.array([1, 2, 3])
+     >>> y = x ** 2
+     >>> data = Table([x, y], names=['x', 'y'])
+     >>> ascii.write(data, 'values.dat')
 
-The ``values.dat`` file will then contain::
+   The ``values.dat`` file will then contain::
 
-  x y
-  1 1
-  2 4
-  3 9
+     x y
+     1 1
+     2 4
+     3 9
 
-Most of the input Reader formats supported by `astropy.io.ascii` for reading are
-also supported for writing. This provides a great deal of flexibility in the
-format for writing. The example below writes the data as a LaTeX table, using
-the option to send the output to ``sys.stdout`` instead of a file::
+   Most of the input Reader formats supported by `astropy.io.ascii` for reading are
+   also supported for writing. This provides a great deal of flexibility in the
+   format for writing. The example below writes the data as a LaTeX table, using
+   the option to send the output to ``sys.stdout`` instead of a file::
 
-  >>> import sys
-  >>> ascii.write(data, sys.stdout, format='latex')
-  \begin{table}
-  \begin{tabular}{cc}
-  x & y \\
-  1 & 1 \\
-  2 & 4 \\
-  3 & 9 \\
-  \end{tabular}
-  \end{table}
+     >>> import sys
+     >>> ascii.write(data, sys.stdout, format='latex')
+     \begin{table}
+     \begin{tabular}{cc}
+     x & y \\
+     1 & 1 \\
+     2 & 4 \\
+     3 & 9 \\
+     \end{tabular}
+     \end{table}
 
-There is also a faster Cython engine for writing simple formats,
-which is enabled by default for these formats (see :ref:`fast_ascii_io`).
-To disable this engine, use the parameter ``fast_writer``::
+   There is also a faster Cython engine for writing simple formats,
+   which is enabled by default for these formats (see :ref:`fast_ascii_io`).
+   To disable this engine, use the parameter ``fast_writer``::
 
-   >>> ascii.write(data, 'values.csv', format='csv', fast_writer=False)  # doctest: +SKIP
+      >>> ascii.write(data, 'values.csv', format='csv', fast_writer=False)  # doctest: +SKIP
 
-Finally, one can write data in the :ref:`ecsv_format` which allows for
-preserving table metadata such as column data types and units. In this way, a
-data table (including one with masked entries) can be stored and read back as
-ASCII with no loss of information.
+   Finally, one can write data in the :ref:`ecsv_format` which allows for
+   preserving table metadata such as column data types and units. In this way, a
+   data table (including one with masked entries) can be stored and read back as
+   ASCII with no loss of information.
 
-  >>> t = Table(masked=True)
-  >>> t['x'] = MaskedColumn([1.0, 2.0], unit='m', dtype='float32')
-  >>> t['x'][1] = np.ma.masked
-  >>> t['y'] = MaskedColumn([False, True], dtype='bool')
+     >>> t = Table(masked=True)
+     >>> t['x'] = MaskedColumn([1.0, 2.0], unit='m', dtype='float32')
+     >>> t['x'][1] = np.ma.masked
+     >>> t['y'] = MaskedColumn([False, True], dtype='bool')
 
-  >>> import io
-  >>> fh = io.StringIO()
-  >>> t.write(fh, format='ascii.ecsv')  # doctest: +SKIP
-  >>> table_string = fh.getvalue()      # doctest: +SKIP
-  >>> print(table_string)               # doctest: +SKIP
-  # %ECSV 0.9
-  # ---
-  # datatype:
-  # - {name: x, unit: m, datatype: float32}
-  # - {name: y, datatype: bool}
-  x y
-  1.0 False
-  "" True
+     >>> import io
+     >>> fh = io.StringIO()
+     >>> t.write(fh, format='ascii.ecsv')  # doctest: +SKIP
+     >>> table_string = fh.getvalue()      # doctest: +SKIP
+     >>> print(table_string)               # doctest: +SKIP
+     # %ECSV 0.9
+     # ---
+     # datatype:
+     # - {name: x, unit: m, datatype: float32}
+     # - {name: y, datatype: bool}
+     x y
+     1.0 False
+     "" True
 
-  >>> Table.read(table_string, format='ascii')  # doctest: +SKIP
-  <Table masked=True length=2>
-     x      y
-     m
-  float32  bool
-  ------- -----
-      1.0 False
-       --  True
+     >>> Table.read(table_string, format='ascii')  # doctest: +SKIP
+     <Table masked=True length=2>
+        x      y
+        m
+     float32  bool
+     ------- -----
+         1.0 False
+          --  True
 
-.. Note::
+   .. Note::
 
-   For most supported formats one can write a masked table and then
-   read it back without losing information about the masked table
-   entries. This is accomplished by using a blank string entry to
-   indicate a masked (missing) value. See the :ref:`replace_bad_or_missing_values`
-   section for more information.
-
-..
-  EXAMPLE END
+      For most supported formats one can write a masked table and then
+      read it back without losing information about the masked table
+      entries. This is accomplished by using a blank string entry to
+      indicate a masked (missing) value. See the :ref:`replace_bad_or_missing_values`
+      section for more information.
 
 .. _supported_formats:
 

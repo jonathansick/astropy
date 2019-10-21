@@ -27,41 +27,37 @@ will not fall back on an ordinary reader if fast reading fails.
 Examples
 --------
 
-..
-  EXAMPLE START
-  Read and Write a CSV File Using Fast ASCII
+.. example:: Read and Write a CSV File Using Fast ASCII
+   :tags: astropy.io.ascii
 
-To open a CSV file and write it back out::
+   To open a CSV file and write it back out::
 
-   >>> from astropy.table import Table
-   >>> t = ascii.read('file.csv', format='fast_csv')  # doctest: +SKIP
-   >>> t.write('output.csv', format='ascii.fast_csv')  # doctest: +SKIP
+      >>> from astropy.table import Table
+      >>> t = ascii.read('file.csv', format='fast_csv')  # doctest: +SKIP
+      >>> t.write('output.csv', format='ascii.fast_csv')  # doctest: +SKIP
 
-To disable the fast engine, specify ``fast_reader=False`` or
-``fast_writer=False``. For example::
+   To disable the fast engine, specify ``fast_reader=False`` or
+   ``fast_writer=False``. For example::
 
-   >>> t = ascii.read('file.csv', format='csv', fast_reader=False) # doctest: +SKIP
-   >>> t.write('file.csv', format='csv', fast_writer=False) # doctest: +SKIP
+      >>> t = ascii.read('file.csv', format='csv', fast_reader=False) # doctest: +SKIP
+      >>> t.write('file.csv', format='csv', fast_writer=False) # doctest: +SKIP
 
-.. Note:: Guessing and Fast reading
+   .. Note:: Guessing and Fast reading
 
-   By default |read| will try to guess the format of the input data by
-   successively trying different formats until one succeeds
-   (see the section on :ref:`guess_formats`). For each supported
-   format it will first try the fast, then the slow version of that
-   reader. Without any additional options this means that both some pure
-   Python readers with no fast implementation and the Python versions
-   of some readers will be tried before getting to some of the fast
-   readers. To bypass them entirely, a fast reader should be explicitly
-   requested as above.
+      By default |read| will try to guess the format of the input data by
+      successively trying different formats until one succeeds
+      (see the section on :ref:`guess_formats`). For each supported
+      format it will first try the fast, then the slow version of that
+      reader. Without any additional options this means that both some pure
+      Python readers with no fast implementation and the Python versions
+      of some readers will be tried before getting to some of the fast
+      readers. To bypass them entirely, a fast reader should be explicitly
+      requested as above.
 
-   **For optimum performance** however, it is recommended to turn off
-   guessing entirely (``guess=False``) or narrow down the format options
-   as much as possible by specifying the format (e.g., ``format='csv'``)
-   and/or other options such as the delimiter.
-
-..
-  EXAMPLE END
+      **For optimum performance** however, it is recommended to turn off
+      guessing entirely (``guess=False``) or narrow down the format options
+      as much as possible by specifying the format (e.g., ``format='csv'``)
+      and/or other options such as the delimiter.
 
 Reading
 =======
@@ -97,17 +93,13 @@ be a ``dict`` specifying any of three additional parameters, ``parallel``,
 Example
 -------
 
-..
-  EXAMPLE START
-  Parallel and Fast Conversion Options for Faster Table Reading
+.. example:: Parallel and Fast Conversion Options for Faster Table Reading
+   :tags: astropy.io.ascii
 
-To specify additional parameters using ``fast_reader``::
+   To specify additional parameters using ``fast_reader``::
 
-   >>> ascii.read('data.txt', format='basic',
-   ...            fast_reader={'parallel': True, 'use_fast_converter': True}) # doctest: +SKIP
-
-..
-  EXAMPLE END
+      >>> ascii.read('data.txt', format='basic',
+      ...            fast_reader={'parallel': True, 'use_fast_converter': True}) # doctest: +SKIP
 
 These options allow for even faster table reading when enabled, but both are
 disabled by default because they come with some caveats.

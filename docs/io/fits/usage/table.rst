@@ -78,49 +78,44 @@ table.
 Example
 -------
 
-..
-  EXAMPLE START
-  Reading a FITS Table with astropy.io.fits
+.. example:: Reading a FITS Table with astropy.io.fits
+   :tags: astropy.io.fits
 
-To read a FITS Table::
+   To read a FITS Table::
 
+       >>> from astropy.io import fits
+       >>> fits_table_filename = fits.util.get_testdata_filepath('btable.fits')
 
-    >>> from astropy.io import fits
-    >>> fits_table_filename = fits.util.get_testdata_filepath('btable.fits')
+       >>> hdul = fits.open(fits_table_filename)  # open a FITS file
+       >>> data = hdul[1].data  # assume the first extension is a table
+       >>> # show the first two rows
+       >>> first_two_rows = data[:2]
+       >>> first_two_rows  # doctest: +SKIP
+       [(1, 'Sirius', -1.45000005, 'A1V') (2, 'Canopus', -0.73000002, 'F0Ib')]
+       >>> # show the values in field "mag"
+       >>> magnitudes = data['mag']
+       >>> magnitudes  # doctest: +SKIP
+       array([-1.45000005, -0.73000002, -0.1       ], dtype=float32)
+       >>> # columns can be referenced by index too
+       >>> names = data.field(1)
+       >>> names.tolist() # doctest: +SKIP
+       ['Sirius', 'Canopus', 'Rigil Kent']
+       >>> hdul.close()
 
-    >>> hdul = fits.open(fits_table_filename)  # open a FITS file
-    >>> data = hdul[1].data  # assume the first extension is a table
-    >>> # show the first two rows
-    >>> first_two_rows = data[:2]
-    >>> first_two_rows  # doctest: +SKIP
-    [(1, 'Sirius', -1.45000005, 'A1V') (2, 'Canopus', -0.73000002, 'F0Ib')]
-    >>> # show the values in field "mag"
-    >>> magnitudes = data['mag']
-    >>> magnitudes  # doctest: +SKIP
-    array([-1.45000005, -0.73000002, -0.1       ], dtype=float32)
-    >>> # columns can be referenced by index too
-    >>> names = data.field(1)
-    >>> names.tolist() # doctest: +SKIP
-    ['Sirius', 'Canopus', 'Rigil Kent']
-    >>> hdul.close()
+   Note that in ``astropy``, when using the ``field()`` method, it is 0-indexed
+   while the suffixes in header keywords such as TFORM is 1-indexed. So,
+   ``data.field(0)`` is the data in the column with the name specified in TTYPE1
+   and format in TFORM1.
 
-Note that in ``astropy``, when using the ``field()`` method, it is 0-indexed
-while the suffixes in header keywords such as TFORM is 1-indexed. So,
-``data.field(0)`` is the data in the column with the name specified in TTYPE1
-and format in TFORM1.
+   .. warning::
 
-.. warning::
-
-    The FITS format allows table columns with a zero-width data format, such as
-    ``'0D'``. This is probably intended as a space-saving measure on files in
-    which that column contains no data. In such files, the zero-width columns
-    are omitted when accessing the table data, so the indexes of fields might
-    change when using the ``field()`` method. For this reason, if you expect
-    to encounter files containing zero-width columns it is recommended to access
-    fields by name rather than by index.
-
-..
-  EXAMPLE END
+       The FITS format allows table columns with a zero-width data format, such as
+       ``'0D'``. This is probably intended as a space-saving measure on files in
+       which that column contains no data. In such files, the zero-width columns
+       are omitted when accessing the table data, so the indexes of fields might
+       change when using the ``field()`` method. For this reason, if you expect
+       to encounter files containing zero-width columns it is recommended to access
+       fields by name rather than by index.
 
 
 Table Operations
@@ -136,31 +131,27 @@ records from a table and make a new table out of it.
 Examples
 --------
 
-..
-  EXAMPLE START
-  Selecting Records in a Table Using a "Mask Array"
+.. example:: Selecting Records in a Table Using a "Mask Array"
+   :tags: astropy.io.fits
 
-Assuming the table's second field as having the name 'magnitude', an output
-table containing all the records of magnitude > -0.5 from the input table is
-generated::
+   Assuming the table's second field as having the name 'magnitude', an output
+   table containing all the records of magnitude > -0.5 from the input table is
+   generated::
 
-    >>> with fits.open(fits_table_filename) as hdul:
-    ...     data = hdul[1].data
-    ...     mask = data['mag'] > -0.5
-    ...     newdata = data[mask]
-    ...     hdu = fits.BinTableHDU(data=newdata)
-    ...     hdu.writeto('newtable.fits')
+       >>> with fits.open(fits_table_filename) as hdul:
+       ...     data = hdul[1].data
+       ...     mask = data['mag'] > -0.5
+       ...     newdata = data[mask]
+       ...     hdu = fits.BinTableHDU(data=newdata)
+       ...     hdu.writeto('newtable.fits')
 
-It is also possible to update the data from the HDU object in-place::
-
-    >>> with fits.open(fits_table_filename) as hdul:
-    ...     hdu = hdul[1]
-    ...     mask = hdu.data['mag'] > -0.5
-    ...     hdu.data = hdu.data[mask]
-    ...     hdu.writeto('newtable2.fits')
-
-..
-  EXAMPLE END
+   It is also possible to update the data from the HDU object in-place::
+   
+       >>> with fits.open(fits_table_filename) as hdul:
+       ...     hdu = hdul[1]
+       ...     mask = hdu.data['mag'] > -0.5
+       ...     hdu.data = hdu.data[mask]
+       ...     hdu.writeto('newtable2.fits')
 
 Merging Tables
 --------------
@@ -170,54 +161,50 @@ Merging different tables is very convenient in ``astropy``.
 Examples
 --------
 
-..
-  EXAMPLE START
-  Merging FITS Tables
+.. example:: Merging FITS Tables
+   :tags: astropy.io.fits
 
-To merge the column definitions of the input tables::
+   To merge the column definitions of the input tables::
 
-    >>> fits_other_table_filename = fits.util.get_testdata_filepath('table.fits')
+       >>> fits_other_table_filename = fits.util.get_testdata_filepath('table.fits')
 
-    >>> with fits.open(fits_table_filename) as hdul1:
-    ...     with fits.open(fits_other_table_filename) as hdul2:
-    ...         new_columns = hdul1[1].columns + hdul2[1].columns
-    ...         new_hdu = fits.BinTableHDU.from_columns(new_columns)
-    >>> new_columns
-    ColDefs(
-            name = 'order'; format = 'I'
-            name = 'name'; format = '20A'
-            name = 'mag'; format = 'E'
-            name = 'Sp'; format = '10A'
-            name = 'target'; format = '20A'
-            name = 'V_mag'; format = 'E'
-        )
+       >>> with fits.open(fits_table_filename) as hdul1:
+       ...     with fits.open(fits_other_table_filename) as hdul2:
+       ...         new_columns = hdul1[1].columns + hdul2[1].columns
+       ...         new_hdu = fits.BinTableHDU.from_columns(new_columns)
+       >>> new_columns
+       ColDefs(
+               name = 'order'; format = 'I'
+               name = 'name'; format = '20A'
+               name = 'mag'; format = 'E'
+               name = 'Sp'; format = '10A'
+               name = 'target'; format = '20A'
+               name = 'V_mag'; format = 'E'
+           )
 
-The number of fields in the output table will be the sum of numbers of fields
-of the input tables. Users have to make sure the input tables do not share any
-common field names. The number of records in the output table will be the
-largest number of records of all input tables. The expanded slots for the
-originally shorter table(s) will be zero (or blank) filled.
+   The number of fields in the output table will be the sum of numbers of fields
+   of the input tables. Users have to make sure the input tables do not share any
+   common field names. The number of records in the output table will be the
+   largest number of records of all input tables. The expanded slots for the
+   originally shorter table(s) will be zero (or blank) filled.
 
-Another version of this example can be used to append a new column to a
-table. Updating an existing table with a new column is generally more
-difficult than it is worth, but you can "append" a column to a table by creating
-a new table with columns from the existing table plus the new column(s)::
+   Another version of this example can be used to append a new column to a
+   table. Updating an existing table with a new column is generally more
+   difficult than it is worth, but you can "append" a column to a table by creating
+   a new table with columns from the existing table plus the new column(s)::
 
-    >>> with fits.open(fits_table_filename) as hdul:
-    ...     orig_table = hdul[1].data
-    ...     orig_cols = orig_table.columns
-    >>> new_cols = fits.ColDefs([
-    ...     fits.Column(name='NEWCOL1', format='D',
-    ...                 array=np.zeros(len(orig_table))),
-    ...     fits.Column(name='NEWCOL2', format='D',
-    ...                 array=np.zeros(len(orig_table)))])
-    >>> hdu = fits.BinTableHDU.from_columns(orig_cols + new_cols)
+       >>> with fits.open(fits_table_filename) as hdul:
+       ...     orig_table = hdul[1].data
+       ...     orig_cols = orig_table.columns
+       >>> new_cols = fits.ColDefs([
+       ...     fits.Column(name='NEWCOL1', format='D',
+       ...                 array=np.zeros(len(orig_table))),
+       ...     fits.Column(name='NEWCOL2', format='D',
+       ...                 array=np.zeros(len(orig_table)))])
+       >>> hdu = fits.BinTableHDU.from_columns(orig_cols + new_cols)
 
-Now ``newtable.fits`` contains a new table with the original table, plus the
-two new columns filled with zeros.
-
-..
-  EXAMPLE END
+   Now ``newtable.fits`` contains a new table with the original table, plus the
+   two new columns filled with zeros.
 
 Appending Tables
 ----------------
@@ -228,25 +215,21 @@ may have different field attributes.
 Examples
 --------
 
-..
-  EXAMPLE START
-  Appending to FITS Tables
+.. example:: Appending to FITS Tables
+   :tags: astropy.io.fits
 
-Here, the first example is to append by field indices, and the second one is to
-append by field names. In both cases, the output table will inherit the column
-attributes (name, format, etc.) of the first table::
+   Here, the first example is to append by field indices, and the second one is to
+   append by field names. In both cases, the output table will inherit the column
+   attributes (name, format, etc.) of the first table::
 
-    >>> with fits.open(fits_table_filename) as hdul1:
-    ...     with fits.open(fits_table_filename) as hdul2:
-    ...         nrows1 = hdul1[1].data.shape[0]
-    ...         nrows2 = hdul2[1].data.shape[0]
-    ...         nrows = nrows1 + nrows2
-    ...         hdu = fits.BinTableHDU.from_columns(hdul1[1].columns, nrows=nrows)
-    ...         for colname in hdul1[1].columns.names:
-    ...             hdu.data[colname][nrows1:] = hdul2[1].data[colname]
-
-..
-  EXAMPLE END
+       >>> with fits.open(fits_table_filename) as hdul1:
+       ...     with fits.open(fits_table_filename) as hdul2:
+       ...         nrows1 = hdul1[1].data.shape[0]
+       ...         nrows2 = hdul2[1].data.shape[0]
+       ...         nrows = nrows1 + nrows2
+       ...         hdu = fits.BinTableHDU.from_columns(hdul1[1].columns, nrows=nrows)
+       ...         for colname in hdul1[1].columns.names:
+       ...             hdu.data[colname][nrows1:] = hdul2[1].data[colname]
 
 Scaled Data in Tables
 =====================
@@ -333,133 +316,129 @@ header keywords and descriptions:
 Examples
 --------
 
-..
-  EXAMPLE START
-  Creating a FITS Table
+.. example:: Creating a FITS Table
+   :tags: astropy.io.fits
 
-Here are a few Columns using various combinations of the optional arguments::
+   Here are a few Columns using various combinations of the optional arguments::
 
-    >>> counts = np.array([312, 334, 308, 317])
-    >>> names = np.array(['NGC1', 'NGC2', 'NGC3', 'NGC4'])
-    >>> values = np.arange(2*2*4).reshape(4, 2, 2)
-    >>> col1 = fits.Column(name='target', format='10A', array=names)
-    >>> col2 = fits.Column(name='counts', format='J', unit='DN', array=counts)
-    >>> col3 = fits.Column(name='notes', format='A10')
-    >>> col4 = fits.Column(name='spectrum', format='10E')
-    >>> col5 = fits.Column(name='flag', format='L', array=[True, False, True, True])
-    >>> col6 = fits.Column(name='intarray', format='4I', dim='(2, 2)', array=values)
+       >>> counts = np.array([312, 334, 308, 317])
+       >>> names = np.array(['NGC1', 'NGC2', 'NGC3', 'NGC4'])
+       >>> values = np.arange(2*2*4).reshape(4, 2, 2)
+       >>> col1 = fits.Column(name='target', format='10A', array=names)
+       >>> col2 = fits.Column(name='counts', format='J', unit='DN', array=counts)
+       >>> col3 = fits.Column(name='notes', format='A10')
+       >>> col4 = fits.Column(name='spectrum', format='10E')
+       >>> col5 = fits.Column(name='flag', format='L', array=[True, False, True, True])
+       >>> col6 = fits.Column(name='intarray', format='4I', dim='(2, 2)', array=values)
 
-In this example, formats are specified with the FITS letter codes. When there
-is a number (>1) preceding a (numeric type) letter code, it means each cell in
-that field is a one-dimensional array. In the case of column "col4", each cell
-is an array (a NumPy array) of 10 elements. And in the case of column "col6",
-with the use of the "dim" argument, each cell is a multi-dimensional array of
-2x2 elements.
+   In this example, formats are specified with the FITS letter codes. When there
+   is a number (>1) preceding a (numeric type) letter code, it means each cell in
+   that field is a one-dimensional array. In the case of column "col4", each cell
+   is an array (a NumPy array) of 10 elements. And in the case of column "col6",
+   with the use of the "dim" argument, each cell is a multi-dimensional array of
+   2x2 elements.
 
-For character string fields, the number should be to the *left* of the letter
-'A' when creating binary tables, and should be to the *right* when creating
-ASCII tables. However, as this is a common confusion, both formats are
-understood when creating binary tables (note, however, that upon writing to a
-file the correct format will be written in the header). So, for columns "col1"
-and "col3", they both have 10 characters in each of their cells. For numeric
-data type, the dimension number must be before the letter code, not after.
+   For character string fields, the number should be to the *left* of the letter
+   'A' when creating binary tables, and should be to the *right* when creating
+   ASCII tables. However, as this is a common confusion, both formats are
+   understood when creating binary tables (note, however, that upon writing to a
+   file the correct format will be written in the header). So, for columns "col1"
+   and "col3", they both have 10 characters in each of their cells. For numeric
+   data type, the dimension number must be before the letter code, not after.
 
-After the columns are constructed, the :meth:`BinTableHDU.from_columns` class
-method can be used to construct a table HDU. We can either go through the
-column definition object::
+   After the columns are constructed, the :meth:`BinTableHDU.from_columns` class
+   method can be used to construct a table HDU. We can either go through the
+   column definition object::
 
-    >>> coldefs = fits.ColDefs([col1, col2, col3, col4, col5, col6])
-    >>> hdu = fits.BinTableHDU.from_columns(coldefs)
-    >>> coldefs
-    ColDefs(
-        name = 'target'; format = '10A'
-        name = 'counts'; format = 'J'; unit = 'DN'
-        name = 'notes'; format = '10A'
-        name = 'spectrum'; format = '10E'
-        name = 'flag'; format = 'L'
-        name = 'intarray'; format = '4I'; dim = '(2, 2)'
-    )
+       >>> coldefs = fits.ColDefs([col1, col2, col3, col4, col5, col6])
+       >>> hdu = fits.BinTableHDU.from_columns(coldefs)
+       >>> coldefs
+       ColDefs(
+           name = 'target'; format = '10A'
+           name = 'counts'; format = 'J'; unit = 'DN'
+           name = 'notes'; format = '10A'
+           name = 'spectrum'; format = '10E'
+           name = 'flag'; format = 'L'
+           name = 'intarray'; format = '4I'; dim = '(2, 2)'
+       )
 
-or directly use the :meth:`BinTableHDU.from_columns` method::
+   or directly use the :meth:`BinTableHDU.from_columns` method::
 
-    >>> hdu = fits.BinTableHDU.from_columns([col1, col2, col3, col4, col5, col6])
-    >>> hdu.columns
-    ColDefs(
-        name = 'target'; format = '10A'
-        name = 'counts'; format = 'J'; unit = 'DN'
-        name = 'notes'; format = '10A'
-        name = 'spectrum'; format = '10E'
-        name = 'flag'; format = 'L'
-        name = 'intarray'; format = '4I'; dim = '(2, 2)'
-    )
+       >>> hdu = fits.BinTableHDU.from_columns([col1, col2, col3, col4, col5, col6])
+       >>> hdu.columns
+       ColDefs(
+           name = 'target'; format = '10A'
+           name = 'counts'; format = 'J'; unit = 'DN'
+           name = 'notes'; format = '10A'
+           name = 'spectrum'; format = '10E'
+           name = 'flag'; format = 'L'
+           name = 'intarray'; format = '4I'; dim = '(2, 2)'
+       )
 
-.. note::
+   .. note::
 
-    Users familiar with older versions of ``astropy`` will wonder what
-    happened to ``astropy.io.fits.new_table``. :meth:`BinTableHDU.from_columns`
-    and its companion for ASCII tables :meth:`TableHDU.from_columns` are the
-    same in the arguments they accept and their behavior, but make it
-    more explicit as to what type of table HDU they create.
+       Users familiar with older versions of ``astropy`` will wonder what
+       happened to ``astropy.io.fits.new_table``. :meth:`BinTableHDU.from_columns`
+       and its companion for ASCII tables :meth:`TableHDU.from_columns` are the
+       same in the arguments they accept and their behavior, but make it
+       more explicit as to what type of table HDU they create.
 
-A look at the newly created HDU's header will show that relevant keywords are
-properly populated::
+   A look at the newly created HDU's header will show that relevant keywords are
+   properly populated::
 
-    >>> hdu.header
-    XTENSION= 'BINTABLE'           / binary table extension
-    BITPIX  =                    8 / array data type
-    NAXIS   =                    2 / number of array dimensions
-    NAXIS1  =                   73 / length of dimension 1
-    NAXIS2  =                    4 / length of dimension 2
-    PCOUNT  =                    0 / number of group parameters
-    GCOUNT  =                    1 / number of groups
-    TFIELDS =                    6 / number of table fields
-    TTYPE1  = 'target  '
-    TFORM1  = '10A     '
-    TTYPE2  = 'counts  '
-    TFORM2  = 'J       '
-    TUNIT2  = 'DN      '
-    TTYPE3  = 'notes   '
-    TFORM3  = '10A     '
-    TTYPE4  = 'spectrum'
-    TFORM4  = '10E     '
-    TTYPE5  = 'flag    '
-    TFORM5  = 'L       '
-    TTYPE6  = 'intarray'
-    TFORM6  = '4I      '
-    TDIM6   = '(2, 2)  '
+       >>> hdu.header
+       XTENSION= 'BINTABLE'           / binary table extension
+       BITPIX  =                    8 / array data type
+       NAXIS   =                    2 / number of array dimensions
+       NAXIS1  =                   73 / length of dimension 1
+       NAXIS2  =                    4 / length of dimension 2
+       PCOUNT  =                    0 / number of group parameters
+       GCOUNT  =                    1 / number of groups
+       TFIELDS =                    6 / number of table fields
+       TTYPE1  = 'target  '
+       TFORM1  = '10A     '
+       TTYPE2  = 'counts  '
+       TFORM2  = 'J       '
+       TUNIT2  = 'DN      '
+       TTYPE3  = 'notes   '
+       TFORM3  = '10A     '
+       TTYPE4  = 'spectrum'
+       TFORM4  = '10E     '
+       TTYPE5  = 'flag    '
+       TFORM5  = 'L       '
+       TTYPE6  = 'intarray'
+       TFORM6  = '4I      '
+       TDIM6   = '(2, 2)  '
 
-.. warning::
+   .. warning::
 
-    It should be noted that when creating a new table with
-    :meth:`BinTableHDU.from_columns`, an in-memory copy of all of the input
-    column arrays is created. This is because it is not guaranteed that the
-    columns are arranged contiguously in memory in row-major order (in fact,
-    they are most likely not), so they have to be combined into a new array.
+       It should be noted that when creating a new table with
+       :meth:`BinTableHDU.from_columns`, an in-memory copy of all of the input
+       column arrays is created. This is because it is not guaranteed that the
+       columns are arranged contiguously in memory in row-major order (in fact,
+       they are most likely not), so they have to be combined into a new array.
 
-However, if the array data *is* already contiguous in memory, such as in an
-existing record array, a kludge can be used to create a new table HDU without
-any copying. First, create the Columns as before, but without using the
-``array=`` argument::
+   However, if the array data *is* already contiguous in memory, such as in an
+   existing record array, a kludge can be used to create a new table HDU without
+   any copying. First, create the Columns as before, but without using the
+   ``array=`` argument::
 
-    >>> col1 = fits.Column(name='target', format='10A')
+       >>> col1 = fits.Column(name='target', format='10A')
 
-Then call :meth:`BinTableHDU.from_columns`::
+   Then call :meth:`BinTableHDU.from_columns`::
 
-    >>> hdu = fits.BinTableHDU.from_columns([col1, col2, col3, col4, col5])
+       >>> hdu = fits.BinTableHDU.from_columns([col1, col2, col3, col4, col5])
 
-This will create a new table HDU as before, with the correct column
-definitions, but an empty data section. Now you can assign your array directly
-to the HDU's data attribute:
+   This will create a new table HDU as before, with the correct column
+   definitions, but an empty data section. Now you can assign your array directly
+   to the HDU's data attribute:
 
-.. doctest-skip::
+   .. doctest-skip::
 
-    >>> hdu.data = mydata
+       >>> hdu.data = mydata
 
-In a future version of ``astropy``, table creation will be simplified and this
-process will not be necessary.
-
-..
-  EXAMPLE END
+   In a future version of ``astropy``, table creation will be simplified and this
+   process will not be necessary.
 
 .. _fits_time_column:
 
@@ -478,30 +457,26 @@ complete and only a subset of the full standard is implemented.
 Example
 -------
 
-..
-  EXAMPLE START
-  FITS Tables with Time Columns
+.. example:: FITS Tables with Time Columns
+   :tags: astropy.io.fits, astropy.time
 
-The following is an example of a Header extract of a binary table (event list)
-with a time column:
+   The following is an example of a Header extract of a binary table (event list)
+   with a time column:
 
-.. parsed-literal::
+   .. parsed-literal::
 
-    COMMENT      ---------- Globally valid key words ----------------
-    TIMESYS = ’TT      ’          / Time system
-    MJDREF  = 50814.000000000000  / MJD zero point for (native) TT (= 1998-01-01)
-    MJD-OBS = 53516.257939301￼￼     / MJD for observation in (native) TT
+       COMMENT      ---------- Globally valid key words ----------------
+       TIMESYS = ’TT      ’          / Time system
+       MJDREF  = 50814.000000000000  / MJD zero point for (native) TT (= 1998-01-01)
+       MJD-OBS = 53516.257939301￼￼     / MJD for observation in (native) TT
 
-    COMMENT      ---------- Time Column -----------------------
-    TTYPE1  = ’Time    ’          / S/C TT corresponding to mid-exposure
-    TFORM1  = ’2D      ’          / format of field
-    TUNIT1  = ’s       ’
-    TCTYP1  = ’TT      ’
-    TCNAM1  = ’Terrestrial Time’  / This is TT
-    TCUNI1  = ’s       ’
-
-..
-  EXAMPLE END
+       COMMENT      ---------- Time Column -----------------------
+       TTYPE1  = ’Time    ’          / S/C TT corresponding to mid-exposure
+       TFORM1  = ’2D      ’          / format of field
+       TUNIT1  = ’s       ’
+       TCTYP1  = ’TT      ’
+       TCNAM1  = ’Terrestrial Time’  / This is TT
+       TCUNI1  = ’s       ’
 
 However, the FITS standard and the ``astropy`` Time object are not perfectly
 mapped and some compromises must be made. To help the user understand how the

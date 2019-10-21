@@ -74,75 +74,71 @@ attributes of the ``FIELD`` elements in the ``VOTABLE`` file.
 Examples
 --------
 
-..
-  EXAMPLE START
-  Reading a VOTable File with astropy.io.votable
+.. example:: Reading a VOTable File with astropy.io.votable
+   :tags: astropy.io.votable
 
-Suppose we had a ``FIELD`` specified as follows:
+   Suppose we had a ``FIELD`` specified as follows:
 
-.. code-block:: xml
+   .. code-block:: xml
 
-   <FIELD ID="Dec" name="dec_targ" datatype="char" ucd="POS_EQ_DEC_MAIN"
-          unit="deg">
-    <DESCRIPTION>
-     representing the ICRS declination of the center of the image.
-    </DESCRIPTION>
-   </FIELD>
+      <FIELD ID="Dec" name="dec_targ" datatype="char" ucd="POS_EQ_DEC_MAIN"
+             unit="deg">
+       <DESCRIPTION>
+        representing the ICRS declination of the center of the image.
+       </DESCRIPTION>
+      </FIELD>
 
-.. note::
+   .. note::
 
-    The mapping from VOTable ``name`` and ``ID`` attributes to ``numpy``
-    dtype ``names`` and ``titles`` is highly confusing.
+       The mapping from VOTable ``name`` and ``ID`` attributes to ``numpy``
+       dtype ``names`` and ``titles`` is highly confusing.
 
-    In VOTable, ``ID`` is guaranteed to be unique, but is not
-    required. ``name`` is not guaranteed to be unique, but is
-    required.
+       In VOTable, ``ID`` is guaranteed to be unique, but is not
+       required. ``name`` is not guaranteed to be unique, but is
+       required.
 
-    In ``numpy`` record dtypes, ``names`` are required to be unique and
-    are required. ``titles`` are not required, and are not required
-    to be unique.
+       In ``numpy`` record dtypes, ``names`` are required to be unique and
+       are required. ``titles`` are not required, and are not required
+       to be unique.
 
-    Therefore, VOTable's ``ID`` most closely maps to ``numpy``'s
-    ``names``, and VOTable's ``name`` most closely maps to ``numpy``'s
-    ``titles``. However, in some cases where a VOTable ``ID`` is not
-    provided, a ``numpy`` ``name`` will be generated based on the VOTable
-    ``name``. Unfortunately, VOTable fields do not have an attribute
-    that is both unique and required, which would be the most
-    convenient mechanism to uniquely identify a column.
+       Therefore, VOTable's ``ID`` most closely maps to ``numpy``'s
+       ``names``, and VOTable's ``name`` most closely maps to ``numpy``'s
+       ``titles``. However, in some cases where a VOTable ``ID`` is not
+       provided, a ``numpy`` ``name`` will be generated based on the VOTable
+       ``name``. Unfortunately, VOTable fields do not have an attribute
+       that is both unique and required, which would be the most
+       convenient mechanism to uniquely identify a column.
 
-    When converting from an `astropy.io.votable.tree.Table` object to
-    an `astropy.table.Table` object, you can specify whether to give
-    preference to ``name`` or ``ID`` attributes when naming the
-    columns. By default, ``ID`` is given preference. To give
-    ``name`` preference, pass the keyword argument
-    ``use_names_over_ids=True``::
+       When converting from an `astropy.io.votable.tree.Table` object to
+       an `astropy.table.Table` object, you can specify whether to give
+       preference to ``name`` or ``ID`` attributes when naming the
+       columns. By default, ``ID`` is given preference. To give
+       ``name`` preference, pass the keyword argument
+       ``use_names_over_ids=True``::
 
-      >>> votable.get_first_table().to_table(use_names_over_ids=True)
+         >>> votable.get_first_table().to_table(use_names_over_ids=True)
 
-This column of data can be extracted from the record array using::
+   This column of data can be extracted from the record array using::
 
-  >>> table.array['dec_targ']
-  array([17.15153360566, 17.15153360566, 17.15153360566, 17.1516686826,
-         17.1516686826, 17.1516686826, 17.1536197136, 17.1536197136,
-         17.1536197136, 17.15375479055, 17.15375479055, 17.15375479055,
-         17.1553884541, 17.15539736932, 17.15539752176,
-         17.25736014763,
-         # ...
-         17.2765703], dtype=object)
+     >>> table.array['dec_targ']
+     array([17.15153360566, 17.15153360566, 17.15153360566, 17.1516686826,
+            17.1516686826, 17.1516686826, 17.1536197136, 17.1536197136,
+            17.1536197136, 17.15375479055, 17.15375479055, 17.15375479055,
+            17.1553884541, 17.15539736932, 17.15539752176,
+            17.25736014763,
+            # ...
+            17.2765703], dtype=object)
 
-or equivalently::
+   or equivalently::
 
-  >>> table.array['Dec']
-  array([17.15153360566, 17.15153360566, 17.15153360566, 17.1516686826,
-         17.1516686826, 17.1516686826, 17.1536197136, 17.1536197136,
-         17.1536197136, 17.15375479055, 17.15375479055, 17.15375479055,
-         17.1553884541, 17.15539736932, 17.15539752176,
-         17.25736014763,
-         # ...
-         17.2765703], dtype=object)
-
-..
-  EXAMPLE END
+     >>> table.array['Dec']
+     array([17.15153360566, 17.15153360566, 17.15153360566, 17.1516686826,
+            17.1516686826, 17.1516686826, 17.1536197136, 17.1536197136,
+            17.1536197136, 17.15375479055, 17.15375479055, 17.15375479055,
+            17.1553884541, 17.15539736932, 17.15539752176,
+            17.25736014763,
+            # ...
+            17.2765703], dtype=object)
 
 Building a New Table from Scratch
 ---------------------------------
@@ -153,44 +149,40 @@ and populate it with data.
 Example
 -------
 
-..
-  EXAMPLE START
-  Building a New Table from a VOTable File
+.. example:: Building a New Table from a VOTable File
+   :tags: astropy.io.votable
 
-To build a new table from a VOTable file::
+   To build a new table from a VOTable file::
 
-  from astropy.io.votable.tree import VOTableFile, Resource, Table, Field
+     from astropy.io.votable.tree import VOTableFile, Resource, Table, Field
 
-  # Create a new VOTable file...
-  votable = VOTableFile()
+     # Create a new VOTable file...
+     votable = VOTableFile()
 
-  # ...with one resource...
-  resource = Resource()
-  votable.resources.append(resource)
+     # ...with one resource...
+     resource = Resource()
+     votable.resources.append(resource)
 
-  # ... with one table
-  table = Table(votable)
-  resource.tables.append(table)
+     # ... with one table
+     table = Table(votable)
+     resource.tables.append(table)
 
-  # Define some fields
-  table.fields.extend([
-          Field(votable, name="filename", datatype="char", arraysize="*"),
-          Field(votable, name="matrix", datatype="double", arraysize="2x2")])
+     # Define some fields
+     table.fields.extend([
+             Field(votable, name="filename", datatype="char", arraysize="*"),
+             Field(votable, name="matrix", datatype="double", arraysize="2x2")])
 
-  # Now, use those field definitions to create the numpy record arrays, with
-  # the given number of rows
-  table.create_arrays(2)
+     # Now, use those field definitions to create the numpy record arrays, with
+     # the given number of rows
+     table.create_arrays(2)
 
-  # Now table.array can be filled with data
-  table.array[0] = ('test1.xml', [[1, 0], [0, 1]])
-  table.array[1] = ('test2.xml', [[0.5, 0.3], [0.2, 0.1]])
+     # Now table.array can be filled with data
+     table.array[0] = ('test1.xml', [[1, 0], [0, 1]])
+     table.array[1] = ('test2.xml', [[0.5, 0.3], [0.2, 0.1]])
 
-  # Now write the whole thing to a file.
-  # Note, we have to use the top-level votable file object
-  votable.to_xml("new_votable.xml")
-
-..
-  EXAMPLE END
+     # Now write the whole thing to a file.
+     # Note, we have to use the top-level votable file object
+     votable.to_xml("new_votable.xml")
 
 Outputting a VOTable File
 -------------------------
@@ -333,25 +325,21 @@ the `~astropy.io.votable.tree.Field` object with the given ID.
 Example
 -------
 
-..
-  EXAMPLE START
-  Examining Field Types in VOTables with astropy.io.votable
+.. example:: Examining Field Types in VOTables with astropy.io.votable
+   :tags: astropy.io.votable
 
-To look up more information about a field::
-
-  >>> field = table.get_field_by_id('Dec')
-  >>> field.datatype
-  'char'
-  >>> field.unit
-  'deg'
-
-.. note::
-   Field descriptors should not be mutated. To change the set of
-   columns, convert the Table to an `astropy.table.Table`, make the
-   changes, and then convert it back.
-
-..
-  EXAMPLE END
+   To look up more information about a field::
+   
+     >>> field = table.get_field_by_id('Dec')
+     >>> field.datatype
+     'char'
+     >>> field.unit
+     'deg'
+   
+   .. note::
+      Field descriptors should not be mutated. To change the set of
+      columns, convert the Table to an `astropy.table.Table`, make the
+      changes, and then convert it back.
 
 .. _votable-serialization:
 

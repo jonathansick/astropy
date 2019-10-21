@@ -50,67 +50,55 @@ registered with the :class:`~astropy.table.Table` class (see
 Examples
 --------
 
-..
-  EXAMPLE START
-  Reading a DAOPhot Table
+.. example:: Reading a DAOPHOT Table
+   :tags: astropy.io, astropy.table
 
-To use this interface, first import the :class:`~astropy.table.Table` class,
-then call the :class:`~astropy.table.Table`
-:meth:`~astropy.table.Table.read` method with the name of the file and
-the file format, for instance ``'ascii.daophot'``:
+   To use this interface, first import the :class:`~astropy.table.Table` class,
+   then call the :class:`~astropy.table.Table`
+   :meth:`~astropy.table.Table.read` method with the name of the file and
+   the file format, for instance ``'ascii.daophot'``:
 
-.. doctest-skip::
+   .. doctest-skip::
 
-    >>> from astropy.table import Table
-    >>> t = Table.read('photometry.dat', format='ascii.daophot')
+       >>> from astropy.table import Table
+       >>> t = Table.read('photometry.dat', format='ascii.daophot')
 
-..
-  EXAMPLE END
+.. example:: Reading a Table Directly from the Internet
+   :tags: astropy.table, astropy.io
 
-..
-  EXAMPLE START
-  Reading a Table Directly from the Internet
+   It is possible to load tables directly from the Internet using URLs. For
+   example, download tables from Vizier catalogues in CDS format
+   (``'ascii.cds'``)::
 
-It is possible to load tables directly from the Internet using URLs. For
-example, download tables from Vizier catalogues in CDS format
-(``'ascii.cds'``)::
+       >>> t = Table.read("ftp://cdsarc.u-strasbg.fr/pub/cats/VII/253/snrs.dat",
+       ...         readme="ftp://cdsarc.u-strasbg.fr/pub/cats/VII/253/ReadMe",
+       ...         format="ascii.cds")  # doctest: +SKIP
 
-    >>> t = Table.read("ftp://cdsarc.u-strasbg.fr/pub/cats/VII/253/snrs.dat",
-    ...         readme="ftp://cdsarc.u-strasbg.fr/pub/cats/VII/253/ReadMe",
-    ...         format="ascii.cds")  # doctest: +SKIP
+   For certain file formats the format can be automatically detected, for
+   example, from the filename extension::
 
-For certain file formats the format can be automatically detected, for
-example, from the filename extension::
+       >>> t = Table.read('table.tex')  # doctest: +SKIP
 
-    >>> t = Table.read('table.tex')  # doctest: +SKIP
+.. example:: Writing a LaTeX Table
+   :tags: astropy.table, astropy.io
 
-..
-  EXAMPLE END
+   For writing a table, the format can be explicitly specified::
 
-..
-  EXAMPLE START
-  Writing a LaTeX Table
+       >>> t.write(filename, format='latex')  # doctest: +SKIP
 
-For writing a table, the format can be explicitly specified::
+   As for the :meth:`~astropy.table.Table.read` method, the format may
+   be automatically identified in some cases.
 
-    >>> t.write(filename, format='latex')  # doctest: +SKIP
+   The underlying file handler will also automatically detect various
+   compressed data formats and transparently uncompress them as far as
+   supported by the Python installation (see
+   :meth:`~astropy.utils.data.get_readable_fileobj`).
 
-As for the :meth:`~astropy.table.Table.read` method, the format may
-be automatically identified in some cases.
-
-The underlying file handler will also automatically detect various
-compressed data formats and transparently uncompress them as far as
-supported by the Python installation (see
-:meth:`~astropy.utils.data.get_readable_fileobj`).
-
-For writing, you can also specify details about the `Table serialization
-methods`_ via the ``serialize_method`` keyword argument. This allows
-fine control of the way to write out certain columns, for instance
-writing an ISO format Time column as a pair of JD1/JD2 floating
-point values (for full resolution) or as a formatted ISO date string.
-
-..
-  EXAMPLE END
+   For writing, you can also specify details about the `Table serialization
+   methods`_ via the ``serialize_method`` keyword argument. This allows
+   fine control of the way to write out certain columns, for instance
+   writing an ISO format Time column as a pair of JD1/JD2 floating
+   point values (for full resolution) or as a formatted ISO date string.
 
 Getting Help on Readers and Writers
 -----------------------------------
@@ -147,25 +135,21 @@ content of tables for the formats supported by the unified I/O interface.
 Example
 -------
 
-..
-  EXAMPLE START
-  Viewing the Contents of a Table on the Command Line
+.. example:: Viewing the Contents of a Table on the Command Line
+   :tags: astropy.table, astropy.io
 
-To view the contents of a table on the command line::
+   To view the contents of a table on the command line::
 
-    $ showtable astropy/io/fits/tests/data/table.fits
+       $ showtable astropy/io/fits/tests/data/table.fits
 
-     target V_mag
-    ------- -----
-    NGC1001  11.1
-    NGC1002  12.3
-    NGC1003  15.2
+        target V_mag
+       ------- -----
+       NGC1001  11.1
+       NGC1002  12.3
+       NGC1003  15.2
 
-To get full documentation on the usage and available options, do ``showtable
---help``.
-
-..
-  EXAMPLE END
+   To get full documentation on the usage and available options, do ``showtable
+   --help``.
 
 .. _built_in_readers_writers:
 
@@ -233,71 +217,66 @@ parse the input.
 Examples
 --------
 
-..
-  EXAMPLE START
-  Reading and Writing ASCII Formats
+.. example:: Reading and Writing ASCII Formats
+   :tags: astropy.io, astropy.io.ascii, astropy.table
 
-To read and write formats supported by `astropy.io.ascii`:
+   To read and write formats supported by `astropy.io.ascii`:
 
-.. doctest-skip::
+   .. doctest-skip::
 
-  >>> t = Table.read('astropy/io/ascii/tests/t/latex1.tex', format='ascii')
-  >>> print(t)
-  cola colb colc
-  ---- ---- ----
-     a    1    2
-     b    3    4
+     >>> t = Table.read('astropy/io/ascii/tests/t/latex1.tex', format='ascii')
+     >>> print(t)
+     cola colb colc
+     ---- ---- ----
+        a    1    2
+        b    3    4
 
-When writing a table with ``format='ascii'`` the output is a basic
-character-delimited file with a single header line containing the
-column names.
+   When writing a table with ``format='ascii'`` the output is a basic
+   character-delimited file with a single header line containing the
+   column names.
 
-All additional arguments are passed to the `astropy.io.ascii`
-:func:`~astropy.io.ascii.read` and :func:`~astropy.io.ascii.write`
-functions. Further details are available in the sections on
-:ref:`io_ascii_read_parameters` and :ref:`io_ascii_write_parameters`. For
-example, to change the column delimiter and the output format for the ``colc``
-column use:
+   All additional arguments are passed to the `astropy.io.ascii`
+   :func:`~astropy.io.ascii.read` and :func:`~astropy.io.ascii.write`
+   functions. Further details are available in the sections on
+   :ref:`io_ascii_read_parameters` and :ref:`io_ascii_write_parameters`. For
+   example, to change the column delimiter and the output format for the ``colc``
+   column use:
 
-.. doctest-skip::
+   .. doctest-skip::
 
-  >>> t.write(sys.stdout, format='ascii', delimiter='|', formats={'colc': '%0.2f'})
-  cola|colb|colc
-  a|1|2.00
-  b|3|4.00
+     >>> t.write(sys.stdout, format='ascii', delimiter='|', formats={'colc': '%0.2f'})
+     cola|colb|colc
+     a|1|2.00
+     b|3|4.00
 
+   .. note::
 
-.. note::
+      When specifying an ASCII table format using the unified interface, the
+      format name is prefixed with ``ascii`` in order to identify the format as
+      ASCII-based. Compare the table above to the `astropy.io.ascii` list of
+      :ref:`supported formats <supported_formats>` where the prefix is not
+      needed. Therefore the following are equivalent:
 
-   When specifying an ASCII table format using the unified interface, the
-   format name is prefixed with ``ascii`` in order to identify the format as
-   ASCII-based. Compare the table above to the `astropy.io.ascii` list of
-   :ref:`supported formats <supported_formats>` where the prefix is not
-   needed. Therefore the following are equivalent:
+   .. doctest-skip::
 
-.. doctest-skip::
+        >>> dat = ascii.read('file.dat', format='daophot')
+        >>> dat = Table.read('file.dat', format='ascii.daophot')
 
-     >>> dat = ascii.read('file.dat', format='daophot')
-     >>> dat = Table.read('file.dat', format='ascii.daophot')
+      For compatibility with ``astropy`` version 0.2 and earlier, the following
+      format values are also allowed in ``Table.read()``: ``daophot``, ``ipac``,
+      ``html``, ``latex``, and ``rdb``.
 
-   For compatibility with ``astropy`` version 0.2 and earlier, the following
-   format values are also allowed in ``Table.read()``: ``daophot``, ``ipac``,
-   ``html``, ``latex``, and ``rdb``.
+   .. attention:: **ECSV is recommended**
 
-.. attention:: **ECSV is recommended**
-
-   For writing and reading tables to ASCII in a way that fully reproduces the
-   table data, types, and metadata (i.e., the table will "round-trip"), we
-   highly recommend using the :ref:`ecsv_format`. This writes the actual data
-   in a space-delimited format (the ``basic`` format) that any ASCII table
-   reader can parse, but also includes metadata encoded in a comment block that
-   allows full reconstruction of the original columns. This includes support
-   for :ref:`ecsv_format_mixin_columns` (such as
-   `~astropy.coordinates.SkyCoord` or `~astropy.time.Time`) and
-   :ref:`ecsv_format_masked_columns`.
-
-..
-  EXAMPLE END
+      For writing and reading tables to ASCII in a way that fully reproduces the
+      table data, types, and metadata (i.e., the table will "round-trip"), we
+      highly recommend using the :ref:`ecsv_format`. This writes the actual data
+      in a space-delimited format (the ``basic`` format) that any ASCII table
+      reader can parse, but also includes metadata encoded in a comment block that
+      allows full reconstruction of the original columns. This includes support
+      for :ref:`ecsv_format_mixin_columns` (such as
+      `~astropy.coordinates.SkyCoord` or `~astropy.time.Time`) and
+      :ref:`ecsv_format_masked_columns`.
 
 .. _table_io_fits:
 
@@ -603,33 +582,29 @@ avoiding any loss of precision.
 Example
 ~~~~~~~
 
-..
-  EXAMPLE START
-  Writing and Reading Time Columns to/from FITS Tables
+.. example:: Writing and Reading Time Columns to/from FITS Tables
+   :tags: astropy.io.fits, astropy.coordinates, astropy.time, astropy.table
 
-To read a FITS table into `~astropy.table.Table`:
+   To read a FITS table into `~astropy.table.Table`:
 
-.. doctest-skip::
+   .. doctest-skip::
 
-    >>> from astropy.time import Time
-    >>> from astropy.table import Table
-    >>> from astropy.coordinates import EarthLocation
-    >>> t = Table()
-    >>> t['a'] = Time([100.0, 200.0], scale='tt', format='mjd',
-    ...               location=EarthLocation(-2446354, 4237210, 4077985, unit='m'))
-    >>> t.write('my_table.fits', overwrite=True)
-    >>> tm = Table.read('my_table.fits', astropy_native=True)
-    >>> tm['a']
-    <Time object: scale='tt' format='jd' value=[ 2400100.5  2400200.5]>
-    >>> tm['a'].location
-    <EarthLocation (-2446354.,  4237210.,  4077985.) m>
-    >>> all(tm['a'] == t['a'])
-    True
+       >>> from astropy.time import Time
+       >>> from astropy.table import Table
+       >>> from astropy.coordinates import EarthLocation
+       >>> t = Table()
+       >>> t['a'] = Time([100.0, 200.0], scale='tt', format='mjd',
+       ...               location=EarthLocation(-2446354, 4237210, 4077985, unit='m'))
+       >>> t.write('my_table.fits', overwrite=True)
+       >>> tm = Table.read('my_table.fits', astropy_native=True)
+       >>> tm['a']
+       <Time object: scale='tt' format='jd' value=[ 2400100.5  2400200.5]>
+       >>> tm['a'].location
+       <EarthLocation (-2446354.,  4237210.,  4077985.) m>
+       >>> all(tm['a'] == t['a'])
+       True
 
-The same will work with ``QTable``.
-
-..
-  EXAMPLE END
+   The same will work with ``QTable``.
 
 In addition to binary table columns, various global time informational FITS
 keywords are treated specially with ``astropy_native=True``. In particular,
@@ -694,55 +669,51 @@ this convention are Chandra, XMM, and HST files.
 Examples
 ~~~~~~~~
 
-..
-  EXAMPLE START
-  Reading FITS Standard Compliant Time Coordinate Columns in Binary Tables
+.. example:: Reading FITS Standard Compliant Time Coordinate Columns in Binary Tables
+   :tags: astropy.table, astropy.time, astropy.io.fits
 
-The following is an example of a Header extract of a Chandra event list:
+   The following is an example of a Header extract of a Chandra event list:
 
-.. parsed-literal::
+   .. parsed-literal::
 
-    COMMENT      ---------- Globally valid key words ----------------
-    DATE    = '2016-01-27T12:34:24' / Date and time of file creation
-    TIMESYS = 'TT      '           / Time system
-    MJDREF  =  5.0814000000000E+04 / [d] MJD zero point for times
-    TIMEUNIT= 's       '           / Time unit
-    TIMEREF = 'LOCAL   '           / Time reference (barycenter/local)
+       COMMENT      ---------- Globally valid key words ----------------
+       DATE    = '2016-01-27T12:34:24' / Date and time of file creation
+       TIMESYS = 'TT      '           / Time system
+       MJDREF  =  5.0814000000000E+04 / [d] MJD zero point for times
+       TIMEUNIT= 's       '           / Time unit
+       TIMEREF = 'LOCAL   '           / Time reference (barycenter/local)
 
-    COMMENT      ---------- Time Column -----------------------
-    TTYPE1  = 'time    '           / S/C TT corresponding to mid-exposure
-    TFORM1  = '1D      '           / format of field
-    TUNIT1  = 's       '
+       COMMENT      ---------- Time Column -----------------------
+       TTYPE1  = 'time    '           / S/C TT corresponding to mid-exposure
+       TFORM1  = '1D      '           / format of field
+       TUNIT1  = 's       '
 
-When reading such a FITS table with ``astropy_native=True``, ``astropy`` checks
-whether the name of a column is "TIME"/ "time" (``TTYPEn = ‘TIME’``) and
-whether its unit is a FITS recognized time unit (``TUNITn`` is a time unit).
+   When reading such a FITS table with ``astropy_native=True``, ``astropy`` checks
+   whether the name of a column is "TIME"/ "time" (``TTYPEn = ‘TIME’``) and
+   whether its unit is a FITS recognized time unit (``TUNITn`` is a time unit).
 
-For example, reading a Chandra event list which has the above mentioned header
-and the time coordinate column ``time`` as ``[1, 2]`` will give::
+   For example, reading a Chandra event list which has the above mentioned header
+   and the time coordinate column ``time`` as ``[1, 2]`` will give::
 
-    >>> from astropy.table import Table
-    >>> from astropy.time import Time, TimeDelta
-    >>> from astropy.utils.data import get_pkg_data_filename
-    >>> chandra_events = get_pkg_data_filename('data/chandra_time.fits',
-    ...                                        package='astropy.io.fits.tests')
-    >>> native = Table.read(chandra_events, astropy_native=True)
-    >>> native['time']  # doctest: +FLOAT_CMP
-    <Time object: scale='tt' format='mjd' value=[57413.76033393 57413.76033393]>
-    >>> non_native = Table.read(chandra_events)
-    >>> # MJDREF  =  5.0814000000000E+04, TIMESYS = 'TT'
-    >>> ref_time = Time(non_native.meta['MJDREF'], format='mjd',
-    ...                 scale=non_native.meta['TIMESYS'].lower())
-    >>> # TTYPE1  = 'time', TUNIT1 = 's'
-    >>> delta_time = TimeDelta(non_native['time'])
-    >>> all(ref_time + delta_time == native['time'])
-    True
+       >>> from astropy.table import Table
+       >>> from astropy.time import Time, TimeDelta
+       >>> from astropy.utils.data import get_pkg_data_filename
+       >>> chandra_events = get_pkg_data_filename('data/chandra_time.fits',
+       ...                                        package='astropy.io.fits.tests')
+       >>> native = Table.read(chandra_events, astropy_native=True)
+       >>> native['time']  # doctest: +FLOAT_CMP
+       <Time object: scale='tt' format='mjd' value=[57413.76033393 57413.76033393]>
+       >>> non_native = Table.read(chandra_events)
+       >>> # MJDREF  =  5.0814000000000E+04, TIMESYS = 'TT'
+       >>> ref_time = Time(non_native.meta['MJDREF'], format='mjd',
+       ...                 scale=non_native.meta['TIMESYS'].lower())
+       >>> # TTYPE1  = 'time', TUNIT1 = 's'
+       >>> delta_time = TimeDelta(non_native['time'])
+       >>> all(ref_time + delta_time == native['time'])
+       True
 
-By default, FITS table columns will be read as standard `~astropy.table.Column`
-objects without taking the FITS time standard into consideration.
-
-..
-  EXAMPLE END
+   By default, FITS table columns will be read as standard `~astropy.table.Column`
+   objects without taking the FITS time standard into consideration.
 
 * String time column in ISO 8601 Datetime format
 
@@ -829,80 +800,76 @@ objects within the ``meta`` dict is not written and will be lost.
 Examples
 ~~~~~~~~
 
-..
-  EXAMPLE START
-  Time Columns in FITS Files
+.. example:: Time Columns in FITS Files
+   :tags: astropy.io.fits, astropy.table, astropy.time
 
-Consider the following Time column:
+   Consider the following Time column:
 
-    >>> t['a'] = Time([100.0, 200.0], scale='tt', format='mjd')  # doctest: +SKIP
+       >>> t['a'] = Time([100.0, 200.0], scale='tt', format='mjd')  # doctest: +SKIP
 
-The FITS standard requires an additional translation layer back into
-the desired format. The Time column ``t['a']`` will undergo the translation
-``Astropy Time --> FITS --> Astropy Time`` which corresponds to the format
-conversion ``mjd --> (jd1, jd2) --> jd``. Thus, the final conversion from
-``(jd1, jd2)`` will require a software implementation which is fully compliant
-with the FITS time standard.
+   The FITS standard requires an additional translation layer back into
+   the desired format. The Time column ``t['a']`` will undergo the translation
+   ``Astropy Time --> FITS --> Astropy Time`` which corresponds to the format
+   conversion ``mjd --> (jd1, jd2) --> jd``. Thus, the final conversion from
+   ``(jd1, jd2)`` will require a software implementation which is fully compliant
+   with the FITS time standard.
 
-Taking this into consideration, the functionality to read/write Time
-from/to FITS can be explicitly turned off, by opting to store the time
-representation values in the format specified by the ``format`` attribute
-of the `~astropy.time.Time` column, instead of the ``(jd1, jd2)`` format, with
-no extra metadata in the header. This is the "lossy" version, but can help
-with portability. For the above example, the FITS column corresponding
-to ``t['a']`` will then store ``[100.0 200.0]`` instead of
-``[[ 2400100.5, 0. ], [ 2400200.5, 0. ]]``. This is done by setting the
-`Table serialization methods`_ for Time columns when writing, as in the
-following example:
+   Taking this into consideration, the functionality to read/write Time
+   from/to FITS can be explicitly turned off, by opting to store the time
+   representation values in the format specified by the ``format`` attribute
+   of the `~astropy.time.Time` column, instead of the ``(jd1, jd2)`` format, with
+   no extra metadata in the header. This is the "lossy" version, but can help
+   with portability. For the above example, the FITS column corresponding
+   to ``t['a']`` will then store ``[100.0 200.0]`` instead of
+   ``[[ 2400100.5, 0. ], [ 2400200.5, 0. ]]``. This is done by setting the
+   `Table serialization methods`_ for Time columns when writing, as in the
+   following example:
 
-.. doctest-skip::
+   .. doctest-skip::
 
-    >>> from astropy.time import Time
-    >>> from astropy.table import Table
-    >>> from astropy.coordinates import EarthLocation
-    >>> t = Table()
-    >>> t['a'] = Time([100.0, 200.0], scale='tt', format='mjd')
-    >>> t.write('my_table.fits', overwrite=True,
-    ...         serialize_method={Time: 'formatted_value'})
-    >>> tm = Table.read('my_table.fits')
-    >>> tm['a']
-    <Column name='a' dtype='float64' length=2>
-    100.0
-    200.0
-    >>> all(tm['a'] == t['a'].value)
-    True
+       >>> from astropy.time import Time
+       >>> from astropy.table import Table
+       >>> from astropy.coordinates import EarthLocation
+       >>> t = Table()
+       >>> t['a'] = Time([100.0, 200.0], scale='tt', format='mjd')
+       >>> t.write('my_table.fits', overwrite=True,
+       ...         serialize_method={Time: 'formatted_value'})
+       >>> tm = Table.read('my_table.fits')
+       >>> tm['a']
+       <Column name='a' dtype='float64' length=2>
+       100.0
+       200.0
+       >>> all(tm['a'] == t['a'].value)
+       True
 
-By default, ``serialize_method`` for Time columns is equal to
-``'jd1_jd2'``, that is, Time columns will be written in full precision.
+   By default, ``serialize_method`` for Time columns is equal to
+   ``'jd1_jd2'``, that is, Time columns will be written in full precision.
 
-.. note::
+   .. note::
 
-   The ``astropy`` `~astropy.time.Time` object does not precisely map to the
-   FITS time standard.
+      The ``astropy`` `~astropy.time.Time` object does not precisely map to the
+      FITS time standard.
 
-   * FORMAT
+      * FORMAT
 
-     The FITS format considers only three formats: ISO 8601, JD, and MJD.
-     ``astropy`` Time allows for many other formats like ``unix`` or ``cxcsec``
-     for representing the values.
+        The FITS format considers only three formats: ISO 8601, JD, and MJD.
+        ``astropy`` Time allows for many other formats like ``unix`` or ``cxcsec``
+        for representing the values.
 
-     Hence, the ``format`` attribute of Time is not stored. After reading from
-     FITS the user must set the ``format`` as desired.
+        Hence, the ``format`` attribute of Time is not stored. After reading from
+        FITS the user must set the ``format`` as desired.
 
-   * LOCATION
+      * LOCATION
 
-     In the FITS standard, the reference position for a time coordinate is a
-     scalar expressed via keywords. However, vectorized reference position or
-     location can be supported by the `Green Bank Keyword Convention
-     <https://fits.gsfc.nasa.gov/registry/greenbank.html>`_ which is a
-     Registered FITS Convention. In ``astropy`` Time, location can be an array
-     which is broadcastable to the Time values.
+        In the FITS standard, the reference position for a time coordinate is a
+        scalar expressed via keywords. However, vectorized reference position or
+        location can be supported by the `Green Bank Keyword Convention
+        <https://fits.gsfc.nasa.gov/registry/greenbank.html>`_ which is a
+        Registered FITS Convention. In ``astropy`` Time, location can be an array
+        which is broadcastable to the Time values.
 
-     Hence, vectorized ``location`` attribute of Time is stored and read
-     following this convention.
-
-..
-  EXAMPLE END
+        Hence, vectorized ``location`` attribute of Time is stored and read
+        following this convention.
 
 .. doctest-skip-all
 
@@ -927,39 +894,35 @@ should be specified via the ``path=`` argument when reading and writing.
 Examples
 --------
 
-..
-  EXAMPLE START
-  Reading from and Writing to HDF5 Files
+.. example:: Reading from and Writing to HDF5 Files
+   :tags: astropy.table, astropy.io
 
-To read a table called ``data`` from an HDF5 file named ``observations.hdf5``,
-you can do::
+   To read a table called ``data`` from an HDF5 file named ``observations.hdf5``,
+   you can do::
 
-    >>> t = Table.read('observations.hdf5', path='data')
+       >>> t = Table.read('observations.hdf5', path='data')
 
-To read a table nested in a group in the HDF5 file, you can do::
+   To read a table nested in a group in the HDF5 file, you can do::
 
-    >>> t = Table.read('observations.hdf5', path='group/data')
+       >>> t = Table.read('observations.hdf5', path='group/data')
 
-To write a table to a new file, the path should also be specified::
+   To write a table to a new file, the path should also be specified::
 
-    >>> t.write('new_file.hdf5', path='updated_data')
+       >>> t.write('new_file.hdf5', path='updated_data')
 
-It is also possible to write a table to an existing file using ``append=True``::
+   It is also possible to write a table to an existing file using ``append=True``::
 
-    >>> t.write('observations.hdf5', path='updated_data', append=True)
+       >>> t.write('observations.hdf5', path='updated_data', append=True)
 
-As with other formats, the ``overwrite=True`` argument is supported for
-overwriting existing files. To overwrite only a single table within an HDF5
-file that has multiple datasets, use *both* the ``overwrite=True`` and
-``append=True`` arguments.
+   As with other formats, the ``overwrite=True`` argument is supported for
+   overwriting existing files. To overwrite only a single table within an HDF5
+   file that has multiple datasets, use *both* the ``overwrite=True`` and
+   ``append=True`` arguments.
 
-Finally, when writing to HDF5 files, the ``compression=`` argument can be
-used to ensure that the data is compressed on disk::
+   Finally, when writing to HDF5 files, the ``compression=`` argument can be
+   used to ensure that the data is compressed on disk::
 
-    >>> t.write('new_file.hdf5', path='updated_data', compression=True)
-
-..
-  EXAMPLE END
+       >>> t.write('new_file.hdf5', path='updated_data', compression=True)
 
 Metadata and Mixin Columns
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1058,32 +1021,28 @@ Provides an interactive HTML export of a Table, like the
 allow to visualize interactively an HTML table (with columns sorting, search,
 and pagination).
 
+.. _Datatables: https://www.datatables.net/
+
 Example
 -------
 
-..
-  EXAMPLE START
-  JSViewer to Provide an Interactive HTML Export of a Table
+.. example:: JSViewer to Provide an Interactive HTML Export of a Table
+   :tags: astropy.table, astropy.io
 
-To write a table ``t`` to a new file::
+   To write a table ``t`` to a new file::
 
-    >>> t.write('new_table.html', format='jsviewer')
+       >>> t.write('new_table.html', format='jsviewer')
 
-Several additional parameters can be used:
+   Several additional parameters can be used:
 
-- *table_id*: the HTML ID of the ``<table>`` tag, defaults to ``'table{id}'``
-  where ``id`` is the ID of the Table object.
-- *max_lines*: maximum number of lines.
-- *table_class*: HTML classes added to the ``<table>`` tag, can be useful to
-  customize the style of the table.
-- *jskwargs*: additional arguments passed to :class:`~astropy.table.JSViewer`.
-- *css*: CSS style, default to ``astropy.table.jsviewer.DEFAULT_CSS``.
-- *htmldict*: additional arguments passed to :class:`~astropy.io.ascii.HTML`.
-
-.. _Datatables: https://www.datatables.net/
-
-..
-  EXAMPLE END
+   - *table_id*: the HTML ID of the ``<table>`` tag, defaults to ``'table{id}'``
+     where ``id`` is the ID of the Table object.
+   - *max_lines*: maximum number of lines.
+   - *table_class*: HTML classes added to the ``<table>`` tag, can be useful to
+     customize the style of the table.
+   - *jskwargs*: additional arguments passed to :class:`~astropy.table.JSViewer`.
+   - *css*: CSS style, default to ``astropy.table.jsviewer.DEFAULT_CSS``.
+   - *htmldict*: additional arguments passed to :class:`~astropy.io.ascii.HTML`.
 
 .. _table_io_votable:
 
@@ -1099,35 +1058,31 @@ specified.
 Examples
 --------
 
-..
-  EXAMPLE START
-  Reading from and Writing to VO Tables
+.. example:: Reading from and Writing to VO Tables
+   :tags: astropy.io.vo
 
-If a VO table file contains only a single table, then it can be read in with::
+   If a VO table file contains only a single table, then it can be read in with::
 
-    >>> t = Table.read('aj285677t3_votable.xml')
+       >>> t = Table.read('aj285677t3_votable.xml')
 
-If more than one table is present in the file, an error will be raised,
-unless the table ID is specified via the ``table_id=`` argument::
+   If more than one table is present in the file, an error will be raised,
+   unless the table ID is specified via the ``table_id=`` argument::
 
-    >>> t = Table.read('catalog.xml')
-    Traceback (most recent call last):
-    ...
-    ValueError: Multiple tables found: table id should be set via the table_id= argument. The available tables are twomass, spitzer
+       >>> t = Table.read('catalog.xml')
+       Traceback (most recent call last):
+       ...
+       ValueError: Multiple tables found: table id should be set via the table_id= argument. The available tables are twomass, spitzer
 
-    >>> t = Table.read('catalog.xml', table_id='twomass')
+       >>> t = Table.read('catalog.xml', table_id='twomass')
 
-To write to a new file, the ID of the table should also be specified (unless
-``t.meta['ID']`` is defined)::
+   To write to a new file, the ID of the table should also be specified (unless
+   ``t.meta['ID']`` is defined)::
 
-    >>> t.write('new_catalog.xml', table_id='updated_table', format='votable')
+       >>> t.write('new_catalog.xml', table_id='updated_table', format='votable')
 
-When writing, the ``compression=True`` argument can be used to force
-compression of the data on disk, and the ``overwrite=True`` argument can be
-used to overwrite an existing file.
-
-..
-  EXAMPLE END
+   When writing, the ``compression=True`` argument can be used to force
+   compression of the data on disk, and the ``overwrite=True`` argument can be
+   used to overwrite an existing file.
 
 .. _table_serialization_methods:
 
@@ -1167,56 +1122,52 @@ YAML    ``jd2_jd2``            ---
 Examples
 --------
 
-..
-  EXAMPLE START
-  Table Serialization Methods in astropy.io
+.. example:: Table Serialization Methods in astropy.io
+   :tags: astropy.io, astropy.table
 
-Start by making a table with a Time column and masked column:
+   Start by making a table with a Time column and masked column:
 
-  >>> import sys
-  >>> from astropy.time import Time
-  >>> from astropy.table import Table, MaskedColumn
+     >>> import sys
+     >>> from astropy.time import Time
+     >>> from astropy.table import Table, MaskedColumn
 
-  >>> t = Table(masked=True)
-  >>> t['tm'] = Time(['2000-01-01', '2000-01-02'])
-  >>> t['mc1'] = MaskedColumn([1.0, 2.0], mask=[True, False])
-  >>> t['mc2'] = MaskedColumn([3.0, 4.0], mask=[False, True])
-  >>> t
-  <Table masked=True length=2>
-             tm             mc1     mc2
-           object         float64 float64
-  ----------------------- ------- -------
-  2000-01-01 00:00:00.000      --     3.0
-  2000-01-02 00:00:00.000     2.0      --
+     >>> t = Table(masked=True)
+     >>> t['tm'] = Time(['2000-01-01', '2000-01-02'])
+     >>> t['mc1'] = MaskedColumn([1.0, 2.0], mask=[True, False])
+     >>> t['mc2'] = MaskedColumn([3.0, 4.0], mask=[False, True])
+     >>> t
+     <Table masked=True length=2>
+                tm             mc1     mc2
+              object         float64 float64
+     ----------------------- ------- -------
+     2000-01-01 00:00:00.000      --     3.0
+     2000-01-02 00:00:00.000     2.0      --
 
-Now specify that you want all `~astropy.time.Time` columns written as JD1/JD2
-and the ``mc1`` column written as a data/mask pair and write to ECSV:
+   Now specify that you want all `~astropy.time.Time` columns written as JD1/JD2
+   and the ``mc1`` column written as a data/mask pair and write to ECSV:
 
-.. doctest-skip::
+   .. doctest-skip::
 
-  >>> serialize_method = {Time: 'jd1_jd2', 'mc1': 'data_mask'}
-  >>> t.write(sys.stdout, format='ascii.ecsv', serialize_method=serialize_method)
-  # %ECSV 0.9
-   ...
-  # schema: astropy-2.0
-   tm.jd1    tm.jd2  mc1  mc1.mask  mc2
-  2451544.0    0.5   1.0   True     3.0
-  2451546.0   -0.5   2.0   False     ""
+     >>> serialize_method = {Time: 'jd1_jd2', 'mc1': 'data_mask'}
+     >>> t.write(sys.stdout, format='ascii.ecsv', serialize_method=serialize_method)
+     # %ECSV 0.9
+      ...
+     # schema: astropy-2.0
+      tm.jd1    tm.jd2  mc1  mc1.mask  mc2
+     2451544.0    0.5   1.0   True     3.0
+     2451546.0   -0.5   2.0   False     ""
 
-(Spaces added for clarity)
+   (Spaces added for clarity)
 
-Notice that the ``tm`` column has been replaced by the ``tm.jd1`` and ``tm.jd2``
-columns, and likewise a new column ``mc1.mask`` has appeared and it explicitly
-contains the mask values. When this table is read back with the ``ascii.ecsv``
-reader then the original columns are reconstructed.
+   Notice that the ``tm`` column has been replaced by the ``tm.jd1`` and ``tm.jd2``
+   columns, and likewise a new column ``mc1.mask`` has appeared and it explicitly
+   contains the mask values. When this table is read back with the ``ascii.ecsv``
+   reader then the original columns are reconstructed.
 
-The ``serialize_method`` argument can be set in two different ways:
+   The ``serialize_method`` argument can be set in two different ways:
 
-- As a single string like ``data_mask``. This value then applies to every
-  column, and is a convenient strategy for a masked table with no Time columns.
-- As a `dict`, where the key can be either a single column name or a class (as
-  shown in the example above), and the value is the corresponding serialization
-  method.
-
-..
-  EXAMPLE END
+   - As a single string like ``data_mask``. This value then applies to every
+     column, and is a convenient strategy for a masked table with no Time columns.
+   - As a `dict`, where the key can be either a single column name or a class (as
+     shown in the example above), and the value is the corresponding serialization
+     method.

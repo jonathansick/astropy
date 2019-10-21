@@ -144,28 +144,24 @@ corresponding format spec is, for example, 'PJ(100)'.
 Example
 -------
 
-..
-  EXAMPLE START
-  Accessing Variable Length Array Columns in FITS Tables
+.. example:: Accessing Variable Length Array Columns in FITS Tables
+   :tags: astropy.io.fits
 
-This example shows a variable length array field of data type int16::
+   This example shows a variable length array field of data type int16::
 
-    >>> filename = fits.util.get_testdata_filepath('variable_length_table.fits')
-    >>> hdul = fits.open(filename)
-    >>> hdul[1].header['tform1']
-    'PI(3)'
-    >>> print(hdul[1].data.field(0))
-    [array([45, 56], dtype=int16) array([11, 12, 13], dtype=int16)]
-    >>> hdul.close()
+       >>> filename = fits.util.get_testdata_filepath('variable_length_table.fits')
+       >>> hdul = fits.open(filename)
+       >>> hdul[1].header['tform1']
+       'PI(3)'
+       >>> print(hdul[1].data.field(0))
+       [array([45, 56], dtype=int16) array([11, 12, 13], dtype=int16)]
+       >>> hdul.close()
 
-In this field the first row has one element, the second row has two elements,
-etc. Accessing variable length fields is almost identical to regular fields,
-except that operations on the whole field simultaneously are usually not
-possible. A user has to process the field row by row as though they are
-independent arrays.
-
-..
-  EXAMPLE END
+   In this field the first row has one element, the second row has two elements,
+   etc. Accessing variable length fields is almost identical to regular fields,
+   except that operations on the whole field simultaneously are usually not
+   possible. A user has to process the field row by row as though they are
+   independent arrays.
 
 
 Creating a Variable Length Array Table
@@ -180,40 +176,36 @@ the ``numpy`` module).
 Example
 -------
 
-..
-  EXAMPLE START
-  Creating a Variable Length Array Column in a FITS Table
+.. example:: Creating a Variable Length Array Column in a FITS Table
+   :tags: astropy.io.fits
 
-Here is an example of creating a table with two fields; one is regular and the
-other a variable length array::
+   Here is an example of creating a table with two fields; one is regular and the
+   other a variable length array::
 
-    >>> col1 = fits.Column(
-    ...    name='var', format='PI()',
-    ...    array=np.array([[45, 56], [11, 12, 13]], dtype=np.object))
-    >>> col2 = fits.Column(name='xyz', format='2I', array=[[11, 3], [12, 4]])
-    >>> hdu = fits.BinTableHDU.from_columns([col1, col2])
-    >>> data = hdu.data
-    >>> data  # doctest: +SKIP
-    FITS_rec([([45, 56], [11,  3]), ([11, 12, 13], [12,  4])],
-             dtype=(numpy.record, [('var', '<i4', (2,)), ('xyz', '<i2', (2,))]))
-    >>> hdu.writeto('variable_length_table.fits')
-    >>> with fits.open('variable_length_table.fits') as hdul:
-    ...     print(repr(hdul[1].header))
-    XTENSION= 'BINTABLE'           / binary table extension
-    BITPIX  =                    8 / array data type
-    NAXIS   =                    2 / number of array dimensions
-    NAXIS1  =                   12 / length of dimension 1
-    NAXIS2  =                    2 / length of dimension 2
-    PCOUNT  =                   10 / number of group parameters
-    GCOUNT  =                    1 / number of groups
-    TFIELDS =                    2 / number of table fields
-    TTYPE1  = 'var     '
-    TFORM1  = 'PI(3)   '
-    TTYPE2  = 'xyz     '
-    TFORM2  = '2I      '
-
-..
-  EXAMPLE END
+       >>> col1 = fits.Column(
+       ...    name='var', format='PI()',
+       ...    array=np.array([[45, 56], [11, 12, 13]], dtype=np.object))
+       >>> col2 = fits.Column(name='xyz', format='2I', array=[[11, 3], [12, 4]])
+       >>> hdu = fits.BinTableHDU.from_columns([col1, col2])
+       >>> data = hdu.data
+       >>> data  # doctest: +SKIP
+       FITS_rec([([45, 56], [11,  3]), ([11, 12, 13], [12,  4])],
+                dtype=(numpy.record, [('var', '<i4', (2,)), ('xyz', '<i2', (2,))]))
+       >>> hdu.writeto('variable_length_table.fits')
+       >>> with fits.open('variable_length_table.fits') as hdul:
+       ...     print(repr(hdul[1].header))
+       XTENSION= 'BINTABLE'           / binary table extension
+       BITPIX  =                    8 / array data type
+       NAXIS   =                    2 / number of array dimensions
+       NAXIS1  =                   12 / length of dimension 1
+       NAXIS2  =                    2 / length of dimension 2
+       PCOUNT  =                   10 / number of group parameters
+       GCOUNT  =                    1 / number of groups
+       TFIELDS =                    2 / number of table fields
+       TTYPE1  = 'var     '
+       TFORM1  = 'PI(3)   '
+       TTYPE2  = 'xyz     '
+       TFORM2  = '2I      '
 
 .. _random-groups:
 
@@ -274,81 +266,77 @@ The data part of a Random Access Group HDU is, like other HDUs, in the
 Examples
 --------
 
-..
-  EXAMPLE START
-  Group Parameters in Random Access Group HDUs
+.. example:: Group Parameters in Random Access Group HDUs
+   :tags: astropy.io.fits
 
-To show the contents of the third group, including parameters and data::
+   To show the contents of the third group, including parameters and data::
 
-    >>> hdul[0].data[2]  # doctest: +FLOAT_CMP
-    (2.0999999, 42.0, 42.0, array([[[[30., 31., 32., 33., 34.],
-             [35., 36., 37., 38., 39.],
-             [40., 41., 42., 43., 44.]]]], dtype=float32))
+       >>> hdul[0].data[2]  # doctest: +FLOAT_CMP
+       (2.0999999, 42.0, 42.0, array([[[[30., 31., 32., 33., 34.],
+                [35., 36., 37., 38., 39.],
+                [40., 41., 42., 43., 44.]]]], dtype=float32))
 
-The data first lists all of the parameters, then the image array, for the
-specified group(s). As a reminder, the image data in this file has the shape of
-(1,1,1,4,3) in Python or C convention, or (3,4,1,1,1) in IRAF or Fortran
-convention.
+   The data first lists all of the parameters, then the image array, for the
+   specified group(s). As a reminder, the image data in this file has the shape of
+   (1,1,1,4,3) in Python or C convention, or (3,4,1,1,1) in IRAF or Fortran
+   convention.
 
-To access the parameters, first find out what the parameter names are, with the
-``.parnames`` attribute::
+   To access the parameters, first find out what the parameter names are, with the
+   ``.parnames`` attribute::
 
-    >>> hdul[0].data.parnames # get the parameter names
-    ['abc', 'xyz', 'xyz']
+       >>> hdul[0].data.parnames # get the parameter names
+       ['abc', 'xyz', 'xyz']
 
-The group parameter can be accessed by the :meth:`~GroupData.par` method. Like
-the table :meth:`~FITS_rec.field` method, the argument can be either index or
-name::
+   The group parameter can be accessed by the :meth:`~GroupData.par` method. Like
+   the table :meth:`~FITS_rec.field` method, the argument can be either index or
+   name::
 
-    >>> hdul[0].data.par(0)[8]  # Access group parameter by name or by index  # doctest: +FLOAT_CMP
-    8.1
-    >>> hdul[0].data.par('abc')[8]  # doctest: +FLOAT_CMP
-    8.1
+       >>> hdul[0].data.par(0)[8]  # Access group parameter by name or by index  # doctest: +FLOAT_CMP
+       8.1
+       >>> hdul[0].data.par('abc')[8]  # doctest: +FLOAT_CMP
+       8.1
 
-Note that the parameter name 'xyz' appears twice. This is a feature in the
-random access group, and it means to add the values together. Thus::
+   Note that the parameter name 'xyz' appears twice. This is a feature in the
+   random access group, and it means to add the values together. Thus::
 
-    >>> hdul[0].data.parnames  # get the parameter names
-    ['abc', 'xyz', 'xyz']
-    >>> hdul[0].data.par(1)[8]  # Duplicate parameter name 'xyz'
-    42.0
-    >>> hdul[0].data.par(2)[8]
-    42.0
-    >>> # When accessed by name, it adds the values together if the name is
-    >>> # shared by more than one parameter
-    >>> hdul[0].data.par('xyz')[8]
-    84.0
+       >>> hdul[0].data.parnames  # get the parameter names
+       ['abc', 'xyz', 'xyz']
+       >>> hdul[0].data.par(1)[8]  # Duplicate parameter name 'xyz'
+       42.0
+       >>> hdul[0].data.par(2)[8]
+       42.0
+       >>> # When accessed by name, it adds the values together if the name is
+       >>> # shared by more than one parameter
+       >>> hdul[0].data.par('xyz')[8]
+       84.0
 
-The :meth:`~GroupData.par` is a method for either the entire data object or one
-data item (a group). So there are two possible ways to get a group parameter
-for a certain group, this is similar to the situation in table data (with its
-:meth:`~FITS_rec.field` method)::
+   The :meth:`~GroupData.par` is a method for either the entire data object or one
+   data item (a group). So there are two possible ways to get a group parameter
+   for a certain group, this is similar to the situation in table data (with its
+   :meth:`~FITS_rec.field` method)::
 
-    >>> hdul[0].data.par(0)[8]  # doctest: +FLOAT_CMP
-    8.1
-    >>> hdul[0].data[8].par(0)  # doctest: +FLOAT_CMP
-    8.1
+       >>> hdul[0].data.par(0)[8]  # doctest: +FLOAT_CMP
+       8.1
+       >>> hdul[0].data[8].par(0)  # doctest: +FLOAT_CMP
+       8.1
 
-On the other hand, to modify a group parameter, we can either assign the new
-value directly (if accessing the row/group number last) or use the
-:meth:`~Group.setpar` method (if accessing the row/group number first). The
-method :meth:`~Group.setpar` is also needed for updating by name if the
-parameter is shared by more than one parameters::
+   On the other hand, to modify a group parameter, we can either assign the new
+   value directly (if accessing the row/group number last) or use the
+   :meth:`~Group.setpar` method (if accessing the row/group number first). The
+   method :meth:`~Group.setpar` is also needed for updating by name if the
+   parameter is shared by more than one parameters::
 
-    >>> # Update group parameter when selecting the row (group) number last
-    >>> hdul[0].data.par(0)[8] = 99.
-    >>> # Update group parameter when selecting the row (group) number first
-    >>> hdul[0].data[8].setpar(0, 99.)  # or:
-    >>> hdul[0].data[8].setpar('abc', 99.)
-    >>> # Update group parameter by name when the name is shared by more than
-    >>> # one parameters, the new value must be a tuple of constants or
-    >>> # sequences
-    >>> hdul[0].data[8].setpar('xyz', (2445729., 0.3))
-    >>> hdul[0].data[8:].par('xyz')  # doctest: +FLOAT_CMP
-    array([2.44572930e+06, 8.40000000e+01])
-
-..
-  EXAMPLE END
+       >>> # Update group parameter when selecting the row (group) number last
+       >>> hdul[0].data.par(0)[8] = 99.
+       >>> # Update group parameter when selecting the row (group) number first
+       >>> hdul[0].data[8].setpar(0, 99.)  # or:
+       >>> hdul[0].data[8].setpar('abc', 99.)
+       >>> # Update group parameter by name when the name is shared by more than
+       >>> # one parameters, the new value must be a tuple of constants or
+       >>> # sequences
+       >>> hdul[0].data[8].setpar('xyz', (2445729., 0.3))
+       >>> hdul[0].data[8:].par('xyz')  # doctest: +FLOAT_CMP
+       array([2.44572930e+06, 8.40000000e+01])
 
 Data: Image Data
 ----------------
@@ -374,62 +362,58 @@ to create the HDU itself.
 Example
 -------
 
-..
-  EXAMPLE START
-  Creating a Random Access Group HDU in a FITS File
+.. example:: Creating a Random Access Group HDU in a FITS File
+   :tags: astropy.io.fits
 
-To create a Random Access Group HDU::
+   To create a Random Access Group HDU::
 
-    >>> # Create the image arrays. The first dimension is the number of groups.
-    >>> imdata = np.arange(150.0).reshape(10, 1, 1, 3, 5)
-    >>> # Next, create the group parameter data, we'll have two parameters.
-    >>> # Note that the size of each parameter's data is also the number of
-    >>> # groups.
-    >>> # A parameter's data can also be a numeric constant.
-    >>> pdata1 = np.arange(10) + 0.1
-    >>> pdata2 = 42
-    >>> # Create the group data object, put parameter names and parameter data
-    >>> # in lists assigned to their corresponding arguments.
-    >>> # If the data type (bitpix) is not specified, the data type of the
-    >>> # image will be used.
-    >>> x = fits.GroupData(imdata, bitpix=-32,
-    ...                    parnames=['abc', 'xyz', 'xyz'],
-    ...                    pardata=[pdata1, pdata2, pdata2])
-    >>> # Now, create the GroupsHDU and write to a FITS file.
-    >>> hdu = fits.GroupsHDU(x)
-    >>> hdu.writeto('test_group.fits')
-    >>> hdu.header
-    SIMPLE  =                    T / conforms to FITS standard
-    BITPIX  =                  -32 / array data type
-    NAXIS   =                    5 / number of array dimensions
-    NAXIS1  =                    0
-    NAXIS2  =                    5
-    NAXIS3  =                    3
-    NAXIS4  =                    1
-    NAXIS5  =                    1
-    EXTEND  =                    T
-    GROUPS  =                    T / has groups
-    PCOUNT  =                    3 / number of parameters
-    GCOUNT  =                   10 / number of groups
-    PTYPE1  = 'abc     '
-    PTYPE2  = 'xyz     '
-    PTYPE3  = 'xyz     '
-    >>> data = hdu.data
-    >>> hdu.data  # doctest: +SKIP
-    GroupData([ (0.1       , 42., 42., [[[[  0.,   1.,   2.,   3.,   4.], [  5.,   6.,   7.,   8.,   9.], [ 10.,  11.,  12.,  13.,  14.]]]]),
-               (1.10000002, 42., 42., [[[[ 15.,  16.,  17.,  18.,  19.], [ 20.,  21.,  22.,  23.,  24.], [ 25.,  26.,  27.,  28.,  29.]]]]),
-               (2.0999999 , 42., 42., [[[[ 30.,  31.,  32.,  33.,  34.], [ 35.,  36.,  37.,  38.,  39.], [ 40.,  41.,  42.,  43.,  44.]]]]),
-               (3.0999999 , 42., 42., [[[[ 45.,  46.,  47.,  48.,  49.], [ 50.,  51.,  52.,  53.,  54.], [ 55.,  56.,  57.,  58.,  59.]]]]),
-               (4.0999999 , 42., 42., [[[[ 60.,  61.,  62.,  63.,  64.], [ 65.,  66.,  67.,  68.,  69.], [ 70.,  71.,  72.,  73.,  74.]]]]),
-               (5.0999999 , 42., 42., [[[[ 75.,  76.,  77.,  78.,  79.], [ 80.,  81.,  82.,  83.,  84.], [ 85.,  86.,  87.,  88.,  89.]]]]),
-               (6.0999999 , 42., 42., [[[[ 90.,  91.,  92.,  93.,  94.], [ 95.,  96.,  97.,  98.,  99.], [100., 101., 102., 103., 104.]]]]),
-               (7.0999999 , 42., 42., [[[[105., 106., 107., 108., 109.], [110., 111., 112., 113., 114.], [115., 116., 117., 118., 119.]]]]),
-               (8.10000038, 42., 42., [[[[120., 121., 122., 123., 124.], [125., 126., 127., 128., 129.], [130., 131., 132., 133., 134.]]]]),
-               (9.10000038, 42., 42., [[[[135., 136., 137., 138., 139.], [140., 141., 142., 143., 144.], [145., 146., 147., 148., 149.]]]])],
-               dtype=(numpy.record, [('abc', '<f4'), ('xyz', '<f4'), ('_xyz', '<f4'), ('DATA', '<f4', (1, 1, 3, 5))]))
-
-..
-  EXAMPLE END
+       >>> # Create the image arrays. The first dimension is the number of groups.
+       >>> imdata = np.arange(150.0).reshape(10, 1, 1, 3, 5)
+       >>> # Next, create the group parameter data, we'll have two parameters.
+       >>> # Note that the size of each parameter's data is also the number of
+       >>> # groups.
+       >>> # A parameter's data can also be a numeric constant.
+       >>> pdata1 = np.arange(10) + 0.1
+       >>> pdata2 = 42
+       >>> # Create the group data object, put parameter names and parameter data
+       >>> # in lists assigned to their corresponding arguments.
+       >>> # If the data type (bitpix) is not specified, the data type of the
+       >>> # image will be used.
+       >>> x = fits.GroupData(imdata, bitpix=-32,
+       ...                    parnames=['abc', 'xyz', 'xyz'],
+       ...                    pardata=[pdata1, pdata2, pdata2])
+       >>> # Now, create the GroupsHDU and write to a FITS file.
+       >>> hdu = fits.GroupsHDU(x)
+       >>> hdu.writeto('test_group.fits')
+       >>> hdu.header
+       SIMPLE  =                    T / conforms to FITS standard
+       BITPIX  =                  -32 / array data type
+       NAXIS   =                    5 / number of array dimensions
+       NAXIS1  =                    0
+       NAXIS2  =                    5
+       NAXIS3  =                    3
+       NAXIS4  =                    1
+       NAXIS5  =                    1
+       EXTEND  =                    T
+       GROUPS  =                    T / has groups
+       PCOUNT  =                    3 / number of parameters
+       GCOUNT  =                   10 / number of groups
+       PTYPE1  = 'abc     '
+       PTYPE2  = 'xyz     '
+       PTYPE3  = 'xyz     '
+       >>> data = hdu.data
+       >>> hdu.data  # doctest: +SKIP
+       GroupData([ (0.1       , 42., 42., [[[[  0.,   1.,   2.,   3.,   4.], [  5.,   6.,   7.,   8.,   9.], [ 10.,  11.,  12.,  13.,  14.]]]]),
+                  (1.10000002, 42., 42., [[[[ 15.,  16.,  17.,  18.,  19.], [ 20.,  21.,  22.,  23.,  24.], [ 25.,  26.,  27.,  28.,  29.]]]]),
+                  (2.0999999 , 42., 42., [[[[ 30.,  31.,  32.,  33.,  34.], [ 35.,  36.,  37.,  38.,  39.], [ 40.,  41.,  42.,  43.,  44.]]]]),
+                  (3.0999999 , 42., 42., [[[[ 45.,  46.,  47.,  48.,  49.], [ 50.,  51.,  52.,  53.,  54.], [ 55.,  56.,  57.,  58.,  59.]]]]),
+                  (4.0999999 , 42., 42., [[[[ 60.,  61.,  62.,  63.,  64.], [ 65.,  66.,  67.,  68.,  69.], [ 70.,  71.,  72.,  73.,  74.]]]]),
+                  (5.0999999 , 42., 42., [[[[ 75.,  76.,  77.,  78.,  79.], [ 80.,  81.,  82.,  83.,  84.], [ 85.,  86.,  87.,  88.,  89.]]]]),
+                  (6.0999999 , 42., 42., [[[[ 90.,  91.,  92.,  93.,  94.], [ 95.,  96.,  97.,  98.,  99.], [100., 101., 102., 103., 104.]]]]),
+                  (7.0999999 , 42., 42., [[[[105., 106., 107., 108., 109.], [110., 111., 112., 113., 114.], [115., 116., 117., 118., 119.]]]]),
+                  (8.10000038, 42., 42., [[[[120., 121., 122., 123., 124.], [125., 126., 127., 128., 129.], [130., 131., 132., 133., 134.]]]]),
+                  (9.10000038, 42., 42., [[[[135., 136., 137., 138., 139.], [140., 141., 142., 143., 144.], [145., 146., 147., 148., 149.]]]])],
+                  dtype=(numpy.record, [('abc', '<f4'), ('xyz', '<f4'), ('_xyz', '<f4'), ('DATA', '<f4', (1, 1, 3, 5))]))
 
 Compressed Image Data
 =====================
@@ -476,73 +460,69 @@ a FITS file.
 Example
 -------
 
-..
-  EXAMPLE START
-  Accessing Compressed FITS Image HDU Headers
+.. example:: Accessing Compressed FITS Image HDU Headers
+   :tags: astropy.io.fits
 
-The content of the HDU header may be accessed using the ``.header`` attribute::
+   The content of the HDU header may be accessed using the ``.header`` attribute::
 
-    >>> filename = fits.util.get_testdata_filepath('compressed_image.fits')
+       >>> filename = fits.util.get_testdata_filepath('compressed_image.fits')
 
-    >>> hdul = fits.open(filename)
-    >>> hdul[1].header
-    XTENSION= 'IMAGE   '           / Image extension
-    BITPIX  =                   16 / data type of original image
-    NAXIS   =                    2 / dimension of original image
-    NAXIS1  =                   10 / length of original image axis
-    NAXIS2  =                   10 / length of original image axis
-    PCOUNT  =                    0 / number of parameters
-    GCOUNT  =                    1 / number of groups
+       >>> hdul = fits.open(filename)
+       >>> hdul[1].header
+       XTENSION= 'IMAGE   '           / Image extension
+       BITPIX  =                   16 / data type of original image
+       NAXIS   =                    2 / dimension of original image
+       NAXIS1  =                   10 / length of original image axis
+       NAXIS2  =                   10 / length of original image axis
+       PCOUNT  =                    0 / number of parameters
+       GCOUNT  =                    1 / number of groups
 
-The contents of the corresponding binary table HDU may be accessed using the
-hidden ``._header`` attribute. However, all user interface with the HDU header
-should be accomplished through the image header (the ``.header`` attribute)::
+   The contents of the corresponding binary table HDU may be accessed using the
+   hidden ``._header`` attribute. However, all user interface with the HDU header
+   should be accomplished through the image header (the ``.header`` attribute)::
 
-    >>> hdul[1]._header
-    XTENSION= 'BINTABLE'           / binary table extension
-    BITPIX  =                    8 / array data type
-    NAXIS   =                    2 / number of array dimensions
-    NAXIS1  =                    8 / width of table in bytes
-    NAXIS2  =                   10 / number of rows in table
-    PCOUNT  =                   60 / number of group parameters
-    GCOUNT  =                    1 / number of groups
-    TFIELDS =                    1 / number of fields in each row
-    TTYPE1  = 'COMPRESSED_DATA'    / label for field 1
-    TFORM1  = '1PB(6)  '           / data format of field: variable length array
-    ZIMAGE  =                    T / extension contains compressed image
-    ZTENSION= 'IMAGE   '           / Image extension
-    ZBITPIX =                   16 / data type of original image
-    ZNAXIS  =                    2 / dimension of original image
-    ZNAXIS1 =                   10 / length of original image axis
-    ZNAXIS2 =                   10 / length of original image axis
-    ZPCOUNT =                    0 / number of parameters
-    ZGCOUNT =                    1 / number of groups
-    ZTILE1  =                   10 / size of tiles to be compressed
-    ZTILE2  =                    1 / size of tiles to be compressed
-    ZCMPTYPE= 'RICE_1  '           / compression algorithm
-    ZNAME1  = 'BLOCKSIZE'          / compression block size
-    ZVAL1   =                   32 / pixels per block
-    ZNAME2  = 'BYTEPIX '           / bytes per pixel (1, 2, 4, or 8)
-    ZVAL2   =                    2 / bytes per pixel (1, 2, 4, or 8)
-    EXTNAME = 'COMPRESSED_IMAGE'   / name of this binary table extension
+       >>> hdul[1]._header
+       XTENSION= 'BINTABLE'           / binary table extension
+       BITPIX  =                    8 / array data type
+       NAXIS   =                    2 / number of array dimensions
+       NAXIS1  =                    8 / width of table in bytes
+       NAXIS2  =                   10 / number of rows in table
+       PCOUNT  =                   60 / number of group parameters
+       GCOUNT  =                    1 / number of groups
+       TFIELDS =                    1 / number of fields in each row
+       TTYPE1  = 'COMPRESSED_DATA'    / label for field 1
+       TFORM1  = '1PB(6)  '           / data format of field: variable length array
+       ZIMAGE  =                    T / extension contains compressed image
+       ZTENSION= 'IMAGE   '           / Image extension
+       ZBITPIX =                   16 / data type of original image
+       ZNAXIS  =                    2 / dimension of original image
+       ZNAXIS1 =                   10 / length of original image axis
+       ZNAXIS2 =                   10 / length of original image axis
+       ZPCOUNT =                    0 / number of parameters
+       ZGCOUNT =                    1 / number of groups
+       ZTILE1  =                   10 / size of tiles to be compressed
+       ZTILE2  =                    1 / size of tiles to be compressed
+       ZCMPTYPE= 'RICE_1  '           / compression algorithm
+       ZNAME1  = 'BLOCKSIZE'          / compression block size
+       ZVAL1   =                   32 / pixels per block
+       ZNAME2  = 'BYTEPIX '           / bytes per pixel (1, 2, 4, or 8)
+       ZVAL2   =                    2 / bytes per pixel (1, 2, 4, or 8)
+       EXTNAME = 'COMPRESSED_IMAGE'   / name of this binary table extension
 
-The contents of the HDU can be summarized by using either the :func:`info`
-convenience function or method::
+   The contents of the HDU can be summarized by using either the :func:`info`
+   convenience function or method::
 
-    >>> fits.info(filename)
-    Filename: ...compressed_image.fits
-    No.    Name      Ver    Type      Cards   Dimensions   Format
-      0  PRIMARY       1 PrimaryHDU       4   ()
-      1  COMPRESSED_IMAGE    1 CompImageHDU      7   (10, 10)   int16
+       >>> fits.info(filename)
+       Filename: ...compressed_image.fits
+       No.    Name      Ver    Type      Cards   Dimensions   Format
+         0  PRIMARY       1 PrimaryHDU       4   ()
+         1  COMPRESSED_IMAGE    1 CompImageHDU      7   (10, 10)   int16
 
-    >>> hdul.info()
-    Filename: ...compressed_image.fits
-    No.    Name      Ver    Type      Cards   Dimensions   Format
-      0  PRIMARY       1 PrimaryHDU       4   ()
-      1  COMPRESSED_IMAGE    1 CompImageHDU      7   (10, 10)   int16
-
-..
-  EXAMPLE END
+       >>> hdul.info()
+       Filename: ...compressed_image.fits
+       No.    Name      Ver    Type      Cards   Dimensions   Format
+         0  PRIMARY       1 PrimaryHDU       4   ()
+         1  COMPRESSED_IMAGE    1 CompImageHDU      7   (10, 10)   int16
 
 Data
 ----
@@ -562,32 +542,28 @@ any) in the image.
 Example
 -------
 
-..
-  EXAMPLE START
-  Accessing Compressed FITS Image HDU Data
+.. example:: Accessing Compressed FITS Image HDU Data
+   :tags: astropy.io.fits
 
-The contents of the uncompressed HDU data may be accessed using the ``.data``
-attribute::
+   The contents of the uncompressed HDU data may be accessed using the ``.data``
+   attribute::
 
-    >>> hdul[1].data
-    array([[ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9],
-           [10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
-           [20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
-           [30, 31, 32, 33, 34, 35, 36, 37, 38, 39],
-           [40, 41, 42, 43, 44, 45, 46, 47, 48, 49],
-           [50, 51, 52, 53, 54, 55, 56, 57, 58, 59],
-           [60, 61, 62, 63, 64, 65, 66, 67, 68, 69],
-           [70, 71, 72, 73, 74, 75, 76, 77, 78, 79],
-           [80, 81, 82, 83, 84, 85, 86, 87, 88, 89],
-           [90, 91, 92, 93, 94, 95, 96, 97, 98, 99]], dtype=int16)
-    >>> hdul.close()
+       >>> hdul[1].data
+       array([[ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9],
+              [10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+              [20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
+              [30, 31, 32, 33, 34, 35, 36, 37, 38, 39],
+              [40, 41, 42, 43, 44, 45, 46, 47, 48, 49],
+              [50, 51, 52, 53, 54, 55, 56, 57, 58, 59],
+              [60, 61, 62, 63, 64, 65, 66, 67, 68, 69],
+              [70, 71, 72, 73, 74, 75, 76, 77, 78, 79],
+              [80, 81, 82, 83, 84, 85, 86, 87, 88, 89],
+              [90, 91, 92, 93, 94, 95, 96, 97, 98, 99]], dtype=int16)
+       >>> hdul.close()
 
-The compressed data can be accessed via the ``.compressed_data`` attribute, but
-this rarely needs be accessed directly. It may be useful for performing direct
-copies of the compressed data without needing to decompress it first.
-
-..
-  EXAMPLE END
+   The compressed data can be accessed via the ``.compressed_data`` attribute, but
+   this rarely needs be accessed directly. It may be useful for performing direct
+   copies of the compressed data without needing to decompress it first.
 
 
 Creating a Compressed Image HDU
@@ -601,19 +577,15 @@ other image HDU.
 Example
 -------
 
-..
-  EXAMPLE START
-  Creating a Compressed FITS Image HDU
+.. example:: Creating a Compressed FITS Image HDU
+   :tags: astropy.io.fits
 
-To create a compressed image HDU::
+   To create a compressed image HDU::
 
-    >>> imageData = np.arange(100).astype('i2').reshape(10, 10)
-    >>> imageHeader = fits.Header()
-    >>> hdu = fits.CompImageHDU(imageData, imageHeader)
-    >>> hdu.writeto('compressed_image.fits')
+       >>> imageData = np.arange(100).astype('i2').reshape(10, 10)
+       >>> imageHeader = fits.Header()
+       >>> hdu = fits.CompImageHDU(imageData, imageHeader)
+       >>> hdu.writeto('compressed_image.fits')
 
-The API documentation for the :class:`CompImageHDU` initializer method
-describes the possible options for constructing a :class:`CompImageHDU` object.
-
-..
-  EXAMPLE END
+   The API documentation for the :class:`CompImageHDU` initializer method
+   describes the possible options for constructing a :class:`CompImageHDU` object.

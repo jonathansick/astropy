@@ -183,41 +183,36 @@ the header.
 Example
 -------
 
-..
-  EXAMPLE START
-  Manipulating FITS Headers in astropy.io.fits
+.. example:: Manipulating FITS Headers in astropy.io.fits
+   :tags: astropy.io.fits
 
-To add a new commentary card::
+   To add a new commentary card::
 
-    >>> hdu.header['HISTORY'] = 'history 1'
-    >>> hdu.header[''] = 'blank 1'
-    >>> hdu.header['COMMENT'] = 'comment 1'
-    >>> hdu.header['HISTORY'] = 'history 2'
-    >>> hdu.header[''] = 'blank 2'
-    >>> hdu.header['COMMENT'] = 'comment 2'
+       >>> hdu.header['HISTORY'] = 'history 1'
+       >>> hdu.header[''] = 'blank 1'
+       >>> hdu.header['COMMENT'] = 'comment 1'
+       >>> hdu.header['HISTORY'] = 'history 2'
+       >>> hdu.header[''] = 'blank 2'
+       >>> hdu.header['COMMENT'] = 'comment 2'
 
-and the part in the modified header becomes:
+   and the part in the modified header becomes:
 
-.. parsed-literal::
+   .. parsed-literal::
 
-    HISTORY history 1
-    HISTORY history 2
-            blank 1
-            blank 2
-    COMMENT comment 1
-    COMMENT comment 2
+       HISTORY history 1
+       HISTORY history 2
+               blank 1
+               blank 2
+       COMMENT comment 1
+       COMMENT comment 2
 
+   Users can also directly control exactly where in the header to add a new
+   commentary card by using the :meth:`Header.insert` method.
 
-Users can also directly control exactly where in the header to add a new
-commentary card by using the :meth:`Header.insert` method.
+   .. note::
 
-.. note::
-
-    Ironically, there is no comment in a commentary card, only a string
-    value.
-
-..
-  EXAMPLE END
+       Ironically, there is no comment in a commentary card, only a string
+       value.
 
 Undefined Values
 ----------------
@@ -268,60 +263,56 @@ A new Card object is created with the :class:`Card` constructor:
 Example
 -------
 
-..
-  EXAMPLE START
-  Card Images in FITS Headers in astropy.io.fits
+.. example:: Card Images in FITS Headers in astropy.io.fits
+   :tags: astropy.io.fits
 
-To create a new Card object::
+   To create a new Card object::
 
-    >>> c1 = fits.Card('TEMP', 80.0, 'temperature, floating value')
-    >>> c2 = fits.Card('DETECTOR', 1)  # comment is optional
-    >>> c3 = fits.Card('MIR_REVR', True,
-    ...                'mirror reversed? Boolean value')
-    >>> c4 = fits.Card('ABC', 2+3j, 'complex value')
-    >>> c5 = fits.Card('OBSERVER', 'Hubble', 'string value')
+       >>> c1 = fits.Card('TEMP', 80.0, 'temperature, floating value')
+       >>> c2 = fits.Card('DETECTOR', 1)  # comment is optional
+       >>> c3 = fits.Card('MIR_REVR', True,
+       ...                'mirror reversed? Boolean value')
+       >>> c4 = fits.Card('ABC', 2+3j, 'complex value')
+       >>> c5 = fits.Card('OBSERVER', 'Hubble', 'string value')
 
-    >>> print(c1); print(c2); print(c3); print(c4); print(c5)  # show the cards
-    TEMP    =                 80.0 / temperature, floating value
-    DETECTOR=                    1
-    MIR_REVR=                    T / mirror reversed? Boolean value
-    ABC     =           (2.0, 3.0) / complex value
-    OBSERVER= 'Hubble  '           / string value
+       >>> print(c1); print(c2); print(c3); print(c4); print(c5)  # show the cards
+       TEMP    =                 80.0 / temperature, floating value
+       DETECTOR=                    1
+       MIR_REVR=                    T / mirror reversed? Boolean value
+       ABC     =           (2.0, 3.0) / complex value
+       OBSERVER= 'Hubble  '           / string value
 
-Cards have the attributes ``.keyword``, ``.value``, and ``.comment``. Both
-``.value`` and ``.comment`` can be changed but not the ``.keyword`` attribute.
-In other words, once a card is created, it is created for a specific, immutable
-keyword.
+   Cards have the attributes ``.keyword``, ``.value``, and ``.comment``. Both
+   ``.value`` and ``.comment`` can be changed but not the ``.keyword`` attribute.
+   In other words, once a card is created, it is created for a specific, immutable
+   keyword.
 
-The :meth:`Card` constructor will check if the arguments given are conforming
-to the FITS standard and has a fixed card image format. If the user wants to
-create a card with a customized format or even a card which is not conforming
-to the FITS standard (e.g., for testing purposes), the :meth:`Card.fromstring`
-class method can be used.
+   The :meth:`Card` constructor will check if the arguments given are conforming
+   to the FITS standard and has a fixed card image format. If the user wants to
+   create a card with a customized format or even a card which is not conforming
+   to the FITS standard (e.g., for testing purposes), the :meth:`Card.fromstring`
+   class method can be used.
 
-Cards can be verified with :meth:`Card.verify`. The nonstandard card ``c2`` in
-the example below is flagged by such verification. More about verification in
-``astropy`` will be discussed in a later chapter.
+   Cards can be verified with :meth:`Card.verify`. The nonstandard card ``c2`` in
+   the example below is flagged by such verification. More about verification in
+   ``astropy`` will be discussed in a later chapter.
 
-::
+   ::
 
-    >>> c1 = fits.Card.fromstring('ABC = 3.456D023')
-    >>> c2 = fits.Card.fromstring("P.I. ='Hubble'")
-    >>> print(c1); print(c2)
-    ABC     =            3.456D023
-    P.I. ='Hubble'
-    >>> c2.verify()  # doctest: +SKIP
-    Output verification result:
-    Unfixable error: Illegal keyword name 'P.I.'
+       >>> c1 = fits.Card.fromstring('ABC = 3.456D023')
+       >>> c2 = fits.Card.fromstring("P.I. ='Hubble'")
+       >>> print(c1); print(c2)
+       ABC     =            3.456D023
+       P.I. ='Hubble'
+       >>> c2.verify()  # doctest: +SKIP
+       Output verification result:
+       Unfixable error: Illegal keyword name 'P.I.'
 
-A list of the :class:`Card` objects underlying a :class:`Header` object can be
-accessed with the :attr:`Header.cards` attribute. This list is only meant for
-observing, and should not be directly manipulated. In fact, it is only a
-copy — modifications to it will not affect the header from which it came. Use
-the methods provided by the :class:`Header` class instead.
-
-..
-  EXAMPLE END
+   A list of the :class:`Card` objects underlying a :class:`Header` object can be
+   accessed with the :attr:`Header.cards` attribute. This list is only meant for
+   observing, and should not be directly manipulated. In fact, it is only a
+   copy — modifications to it will not affect the header from which it came. Use
+   the methods provided by the :class:`Header` class instead.
 
 
 CONTINUE Cards
@@ -341,41 +332,37 @@ standard.
 Examples
 --------
 
-..
-  EXAMPLE START
-  CONTINUE Cards for Long String Values in astropy.io.fits
+.. example:: CONTINUE Cards for Long String Values in astropy.io.fits
+  :tags: astropy.io.fits
 
-The examples below show that the use of CONTINUE is automatic for long
-string values::
+   The examples below show that the use of CONTINUE is automatic for long
+   string values::
 
-    >>> hdr = fits.Header()
-    >>> hdr['abc'] = 'abcdefg' * 20
-    >>> hdr
-    ABC     = 'abcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcd&'
-    CONTINUE  'efgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefga&'
-    CONTINUE  'bcdefg'
-    >>> hdr['abc']
-    'abcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefg'
-    >>> # both value and comments are long
-    >>> hdr['abc'] = ('abcdefg' * 10, 'abcdefg' * 10)
-    >>> hdr
-    ABC     = 'abcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcd&'
-    CONTINUE  'efg&'
-    CONTINUE  '&' / abcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefga
-    CONTINUE  '' / bcdefg
+       >>> hdr = fits.Header()
+       >>> hdr['abc'] = 'abcdefg' * 20
+       >>> hdr
+       ABC     = 'abcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcd&'
+       CONTINUE  'efgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefga&'
+       CONTINUE  'bcdefg'
+       >>> hdr['abc']
+       'abcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefg'
+       >>> # both value and comments are long
+       >>> hdr['abc'] = ('abcdefg' * 10, 'abcdefg' * 10)
+       >>> hdr
+       ABC     = 'abcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcd&'
+       CONTINUE  'efg&'
+       CONTINUE  '&' / abcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefga
+       CONTINUE  '' / bcdefg
 
-Note that when a CONTINUE card is used, at the end of each 80-character card
-image, an ampersand is present. The ampersand is not part of the string value.
-Also, there is no "=" at the ninth column after CONTINUE. In the first example,
-the entire 240 characters is treated by ``astropy`` as a single card. So, if it
-is the nth card in a header, the (n+1)th card refers to the next keyword, not
-the next CONTINUE card. As such, CONTINUE cards are transparently handled by
-``astropy`` as a single logical card, and it is generally not necessary to worry
-about the details of the format. Keywords that resolve to a set of CONTINUE
-cards can be accessed and updated just like regular keywords.
-
-..
-  EXAMPLE END
+   Note that when a CONTINUE card is used, at the end of each 80-character card
+   image, an ampersand is present. The ampersand is not part of the string value.
+   Also, there is no "=" at the ninth column after CONTINUE. In the first example,
+   the entire 240 characters is treated by ``astropy`` as a single card. So, if it
+   is the nth card in a header, the (n+1)th card refers to the next keyword, not
+   the next CONTINUE card. As such, CONTINUE cards are transparently handled by
+   ``astropy`` as a single logical card, and it is generally not necessary to worry
+   about the details of the format. Keywords that resolve to a set of CONTINUE
+   cards can be accessed and updated just like regular keywords.
 
 
 HIERARCH Cards
@@ -397,36 +384,32 @@ other: ``hdr['abcdefghi']``, without prepending 'HIERARCH' to the keyword.
 Examples
 --------
 
-..
-  EXAMPLE START
-  HIERARCH Cards for Keywords Longer than Eight Characters in astropy.io.fits
+.. example:: HIERARCH Cards for Keywords Longer than Eight Characters in astropy.io.fits
+  :tags: astropy.io.fits
 
-``astropy`` will use a HIERARCH card and issue a warning when keywords contain
-more than eight characters::
+  ``astropy`` will use a HIERARCH card and issue a warning when keywords contain
+  more than eight characters::
 
-    >>> # this will result in a Warning because a HIERARCH card is implicitly created
-    >>> c = fits.Card('abcdefghi', 10)
-    >>> print(c)
-    HIERARCH abcdefghi = 10
-    >>> c = fits.Card('hierarch abcdefghi', 10)
-    >>> print(c)
-    HIERARCH abcdefghi = 10
-    >>> hdu = fits.PrimaryHDU()
-    >>> hdu.header['hierarch abcdefghi'] =  99
-    >>> hdu.header['abcdefghi']
-    99
-    >>> hdu.header['abcdefghi'] = 10
-    >>> hdu.header['abcdefghi']
-    10
-    >>> hdu.header
-    SIMPLE  =                    T / conforms to FITS standard
-    BITPIX  =                    8 / array data type
-    NAXIS   =                    0 / number of array dimensions
-    EXTEND  =                    T
-    HIERARCH abcdefghi = 10
-
-..
-  EXAMPLE END
+      >>> # this will result in a Warning because a HIERARCH card is implicitly created
+      >>> c = fits.Card('abcdefghi', 10)
+      >>> print(c)
+      HIERARCH abcdefghi = 10
+      >>> c = fits.Card('hierarch abcdefghi', 10)
+      >>> print(c)
+      HIERARCH abcdefghi = 10
+      >>> hdu = fits.PrimaryHDU()
+      >>> hdu.header['hierarch abcdefghi'] =  99
+      >>> hdu.header['abcdefghi']
+      99
+      >>> hdu.header['abcdefghi'] = 10
+      >>> hdu.header['abcdefghi']
+      10
+      >>> hdu.header
+      SIMPLE  =                    T / conforms to FITS standard
+      BITPIX  =                    8 / array data type
+      NAXIS   =                    0 / number of array dimensions
+      EXTEND  =                    T
+      HIERARCH abcdefghi = 10
 
 .. note::
 

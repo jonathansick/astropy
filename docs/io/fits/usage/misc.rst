@@ -30,25 +30,21 @@ they diff. The returned diff instance has a number of attributes starting with
 Example
 -------
 
-..
-  EXAMPLE START
-  Generating Differences Between FITS Files Using astropy.io.fits.diff
+.. example:: Generating Differences Between FITS Files Using astropy.io.fits.diff
+   :tags: astropy.io.fits
 
-The :class:`HeaderDiff` class can be used to find the differences
-between two :class:`Header` objects like so::
+   The :class:`HeaderDiff` class can be used to find the differences
+   between two :class:`Header` objects like so::
 
-    >>> from astropy.io import fits
-    >>> header1 = fits.Header([('KEY_A', 1), ('KEY_B', 2)])
-    >>> header2 = fits.Header([('KEY_A', 3), ('KEY_C', 4)])
-    >>> diff = fits.diff.HeaderDiff(header1, header2)
-    >>> diff.identical
-    False
-    >>> diff.diff_keywords
-    (['KEY_B'], ['KEY_C'])
-    >>> diff.diff_keyword_values
-    defaultdict(..., {'KEY_A': [(1, 3)]})
+       >>> from astropy.io import fits
+       >>> header1 = fits.Header([('KEY_A', 1), ('KEY_B', 2)])
+       >>> header2 = fits.Header([('KEY_A', 3), ('KEY_C', 4)])
+       >>> diff = fits.diff.HeaderDiff(header1, header2)
+       >>> diff.identical
+       False
+       >>> diff.diff_keywords
+       (['KEY_B'], ['KEY_C'])
+       >>> diff.diff_keyword_values
+       defaultdict(..., {'KEY_A': [(1, 3)]})
 
-See the API documentation for details on the different differ classes.
-
-..
-  EXAMPLE END
+   See the API documentation for details on the different differ classes.
