@@ -50,9 +50,10 @@ when creating boolean masks.
 Fundamentally, *by default*, `~astropy.nddata.bitmask.bitfield_to_boolean_mask`
 performs the following operation:
 
-.. _main_eq:
+.. code-block:: text
+   :name: main_eq
 
-``(1)    boolean_mask = (bitfield & ~bit_mask) != 0``
+   (1)    boolean_mask = (bitfield & ~bit_mask) != 0
 
 (Here ``&`` is bitwise, while ``and`` and ``~`` is the bitwise ``not``
 operation.) In the previous formula, ``bit_mask`` is a bit mask created from
@@ -64,10 +65,9 @@ Example
 .. example:: Creating Boolean Masks from Bit Field Arrays
    :tags: astropy.nddata
 
-   .. _table1:
-
    .. table:: Table 1: Examples of Boolean Mask Computations \
               (default parameters and 8-bit data type)
+       :name: table1
 
        +--------------+--------------+--------------+--------------+------------+
        | Bit Field    |  Bit Mask    | ~(Bit Mask)  | Bit Field &  |Boolean Mask|
@@ -92,7 +92,7 @@ bit mask or lists of bit flags. Lists of bit flags will be combined into a
 bit mask and can be provided either as a Python list of
 **integer bit flag values** or as a comma-separated (or ``+``-separated)
 list of integer bit flag values. Consider the bit mask from the first example
-in `Table 1 <table1_>`_. In this case ``ignore_flags`` can be set either to:
+in :ref:`Table 1 <table1>`. In this case ``ignore_flags`` can be set either to:
 
     - An integer value bit mask 80
     - A Python list indicating individual non-zero
@@ -148,11 +148,12 @@ Example
    In `~astropy.nddata.bitmask.bitfield_to_boolean_mask` specifying bit flags that
    must be considered when creating the boolean mask can be accomplished by
    setting the parameter ``flip_bits`` to `True`. This effectively modifies
-   `equation (1) <main_eq_>`_ to:
+   :ref:`equation (1) <main_eq>` to:
 
-   .. _modif_eq2:
+   .. code-block:: text
+      :name: modif_eq2
 
-   ``(2)    boolean_mask = (bitfield & bit_mask) != 0``
+      (2)    boolean_mask = (bitfield & bit_mask) != 0
 
    So, instead of:
 
@@ -180,9 +181,10 @@ Inverting Boolean Masks
 Other times, it may be more convenient to obtain an inverted mask in which
 flagged data are converted to `False` instead of `True`:
 
-.. _modif_eq3:
+.. code-block:: text
+   :name: modif_eq3
 
-``(3)    boolean_mask = (bitfield & ~bit_mask) == 0``
+   (3)    boolean_mask = (bitfield & ~bit_mask) == 0
 
 This can be accomplished by changing the ``good_mask_value`` parameter from
 its default value (`False`) to `True`.
