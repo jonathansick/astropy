@@ -16,7 +16,7 @@ optionally use a less flexible C-based engine for reading and writing for
 improved performance.
 
 The following shows a few of the ASCII formats that are available, while the
-section on `Supported formats`_ contains the full list.
+section on :ref:`supported formats <supported_formats>` contains the full list.
 
 * :class:`~astropy.io.ascii.Basic`: basic table with customizable delimiters and header configurations
 * :class:`~astropy.io.ascii.Cds`: `CDS format table <http://vizier.u-strasbg.fr/doc/catstd.htx>`_ (also Vizier and ApJ machine readable tables)
@@ -70,8 +70,8 @@ The first argument to the |read| function can be the name of a file, a string
 representation of a table, or a list of table lines. The return value
 (``data`` in this case) is a :ref:`Table <astropy-table>` object.
 
-By default, |read| will try to `guess the table format <#guess-table-format>`_
-by trying all of the `supported formats`_.
+By default, |read| will try to :ref:`guess the table format <guess-formats>`_
+by trying all of the :ref:`supported formats <supported_formats>`.
 
 .. Warning::
 
@@ -104,8 +104,8 @@ Examples
 
    If the format of a file is known (e.g., it is a fixed-width table or an IPAC
    table), then it is more efficient and reliable to provide a value for the
-   ``format`` argument from one of the values in the `supported formats`_. For
-   example::
+   ``format`` argument from one of the values in the :ref:`supported formats
+   <supported_formats>`. For example::
 
       >>> data = ascii.read(lines, format='fixed_width_two_line', delimiter='&')
 
