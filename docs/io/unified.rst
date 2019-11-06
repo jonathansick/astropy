@@ -43,7 +43,7 @@ The :class:`~astropy.table.Table` class includes two methods,
 :meth:`~astropy.table.Table.read` and
 :meth:`~astropy.table.Table.write`, that make it possible to read from
 and write to files. A number of formats are automatically supported (see
-`Built-in table readers/writers`_) and new file formats and extensions can be
+:ref:`built_in_readers_writers`) and new file formats and extensions can be
 registered with the :class:`~astropy.table.Table` class (see
 :ref:`io_registry`).
 
@@ -94,18 +94,19 @@ Examples
    supported by the Python installation (see
    :meth:`~astropy.utils.data.get_readable_fileobj`).
 
-   For writing, you can also specify details about the `Table serialization
-   methods`_ via the ``serialize_method`` keyword argument. This allows
-   fine control of the way to write out certain columns, for instance
-   writing an ISO format Time column as a pair of JD1/JD2 floating
-   point values (for full resolution) or as a formatted ISO date string.
+   For writing, you can also specify details about the :ref:`Table
+   serialization methods <table_serialization_methods>` via the
+   ``serialize_method`` keyword argument. This allows fine control of the way
+   to write out certain columns, for instance writing an ISO format Time column
+   as a pair of JD1/JD2 floating point values (for full resolution) or as
+   a formatted ISO date string.
 
 Getting Help on Readers and Writers
 -----------------------------------
 
 Each file format is handled by a specific reader or writer, and each of those
 functions will have its own set of arguments. For examples of
-this see the section `Built-in table readers/writers`_. This section also
+this see the section :ref:`built_in_readers_writers`. This section also
 provides the full list of choices for the ``format`` argument.
 
 To get help on the available arguments for each format, use the ``help()``
@@ -814,16 +815,16 @@ Examples
    ``(jd1, jd2)`` will require a software implementation which is fully compliant
    with the FITS time standard.
 
-   Taking this into consideration, the functionality to read/write Time
-   from/to FITS can be explicitly turned off, by opting to store the time
-   representation values in the format specified by the ``format`` attribute
-   of the `~astropy.time.Time` column, instead of the ``(jd1, jd2)`` format, with
+   Taking this into consideration, the functionality to read/write Time from/to
+   FITS can be explicitly turned off, by opting to store the time
+   representation values in the format specified by the ``format`` attribute of
+   the `~astropy.time.Time` column, instead of the ``(jd1, jd2)`` format, with
    no extra metadata in the header. This is the "lossy" version, but can help
-   with portability. For the above example, the FITS column corresponding
-   to ``t['a']`` will then store ``[100.0 200.0]`` instead of
-   ``[[ 2400100.5, 0. ], [ 2400200.5, 0. ]]``. This is done by setting the
-   `Table serialization methods`_ for Time columns when writing, as in the
-   following example:
+   with portability. For the above example, the FITS column corresponding to
+   ``t['a']`` will then store ``[100.0 200.0]`` instead of ``[[ 2400100.5, 0.
+   ], [ 2400200.5, 0. ]]``. This is done by setting the :ref:`Table
+   serialization methods <table_serialization_methods>` for Time columns when
+   writing, as in the following example:
 
    .. doctest-skip::
 
